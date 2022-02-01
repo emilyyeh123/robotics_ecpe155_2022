@@ -19,8 +19,8 @@ int main(void) {
     // pin 2 - blue
     // pin 3 - green
     // Make RGB LEDs outputs and enable them.
-    GPIO_PORTF[GPIO_DIR] |= GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3;
-    GPIO_PORTF[GPIO_DEN] |= GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3;
+    GPIO_PORTF[GPIO_DIR] |= (GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
+    GPIO_PORTF[GPIO_DEN] |= (GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3);
 
     while( 1 ) {
       // Turn the LED off, then delay
