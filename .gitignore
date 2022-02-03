@@ -1,0 +1,11 @@
+/.metadata/
+
+*.obj
+
+.jxbrowser-data/
+.metadata/
+dvt/
+TivaWare/
+RemoteSystemsTempFiles
+Debug/
+
