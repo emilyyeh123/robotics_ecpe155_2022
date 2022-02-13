@@ -1,8 +1,9 @@
 /*
- * PWM_Function_Verification.c
+ * PWM.c
  *
  *  Created on: Feb 9, 2022
  *      Author: Uri
+ *      Function designed to emit a
  */
 
 #include <stdint.h>
@@ -20,7 +21,7 @@
 
 
 
-int main(void)
+void PWM_Function(int period, int pulsewidth)
 {
     SysCtlClockSet(SYSCTL_SYSDIV_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); // Enable the 16MHz crystal in the main oscillator. The precision clock runs at a natural 400MHz
     // the system automatically divides by 2 so we code another divide by 5 to get a total of 40 MHz
@@ -45,11 +46,11 @@ int main(void)
     // microseconds. For a 40 MHz clock, this translates to 800 clock ticks.
     // Use this value to set the period.
     //
-    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_0, 800); //period of about 20 microseconds
+    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_0, period); //period of about 20 microseconds
     //
     // Set the pulse width of PWM0 for a 25% duty cycle.
     //
-    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_0, 100);
+    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_0, pulsewidth);
 
     //
     // Start the timers in generator 0.
