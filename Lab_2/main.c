@@ -24,29 +24,31 @@
 #include "Motor_Control.h"
 
 
+
 int main()
 {
     // Perform a PWM display on Pin Connector J3.3
     // View with an Oscilloscope
-   // PWM_Function(800, 200);
+    //PWM_Function(800, 200);
 
-   // SysCtlDelay(1000000);
+    //SysCtlDelay(1000000);
 
    // PWM_Function(0, 0);
 
    // SysCtlDelay(10000);
 
-    while(1){
 
-        // Move Forward for a certain time
-        Motor_Forward(800, 200, 800, 200);
-        SysCtlDelay(100000);
+    motorForward(800, 100, 800, 100);
+    SysCtlDelay(100000);
 
-        // Move Backward for a certain time
-        Motor_Backward(800, 200, 800, 200);
+    motorStop();
+    SysCtlDelay(100000);
 
-        SysCtlDelay(100000);
-    }
+    motorBackward(800, 100, 800, 100);
+    SysCtlDelay(100000);
+
+    motorStop();
+    SysCtlDelay(100000);
 
 
 }

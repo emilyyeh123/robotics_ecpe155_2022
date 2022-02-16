@@ -21,6 +21,7 @@
 
 
 
+
 void PWM_Function(int period, int pulsewidth)
 {
     SysCtlClockSet(SYSCTL_SYSDIV_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); // Enable the 16MHz crystal in the main oscillator. The precision clock runs at a natural 400MHz
@@ -35,9 +36,9 @@ void PWM_Function(int period, int pulsewidth)
     {
     }
 
-    // Set Pin J3.3 to be a PWM Output Pin
-    GPIOPinTypePWM(GPIO_PORTB_BASE, GPIO_PIN_6); // from LanchPad UM, J3 connector can control GPIO PB6 (pg10), From Tiva DS M0PWM0 is controlled by PB6 (pg1233).
-    GPIOPinConfigure(GPIO_PB6_M0PWM0); // Configure pin 6 for PWM Module 0 Generator 0
+    // Configure the pins for PWM signal
+    GPIOPinTypePWM(GPIO_PORTB_BASE, GPIO_PIN_4);
+    GPIOPinConfigure(GPIO_PB4_M0PWM2); // Configure pin 7 for Motion Control Module 0 PWM 1 Generator 0
 
     // Configure the PWM generator for count down mode
     PWMGenConfigure(PWM0_BASE, PWM_GEN_0, PWM_GEN_MODE_DOWN);
@@ -60,11 +61,6 @@ void PWM_Function(int period, int pulsewidth)
     // Enable the outputs.
     //
     PWMOutputState(PWM0_BASE, PWM_OUT_0_BIT, true);
-
-    //SysCtlDelay(100000);
-while (1)
-{
-}
 
 
 }
