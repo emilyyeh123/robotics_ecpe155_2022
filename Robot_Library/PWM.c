@@ -18,7 +18,7 @@
 #include "driverlib/pin_map.h"
 #include "inc/hw_gpio.h"
 #include "driverlib/rom.h"
-
+#include "inc/tm4c123gh6pm.h"
 
 
 
@@ -41,26 +41,26 @@ void PWM_Function(int period, int pulsewidth)
     GPIOPinConfigure(GPIO_PB4_M0PWM2); // Configure pin 7 for Motion Control Module 0 PWM 1 Generator 0
 
     // Configure the PWM generator for count down mode
-    PWMGenConfigure(PWM0_BASE, PWM_GEN_0, PWM_GEN_MODE_DOWN);
+    PWMGenConfigure(PWM0_BASE, PWM_GEN_1, PWM_GEN_MODE_DOWN);
     //
     // Set the period. For a 50 KHz frequency, the period = 1/50,000, or 20
     // microseconds. For a 40 MHz clock, this translates to 800 clock ticks.
     // Use this value to set the period.
     //
-    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_0, period); //period of about 20 microseconds
+    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_1, period); //period of about 20 microseconds
     //
     // Set the pulse width of PWM0 for a 25% duty cycle.
     //
-    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_0, pulsewidth);
+    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_2, pulsewidth);
 
     //
     // Start the timers in generator 0.
     //
-    PWMGenEnable(PWM0_BASE, PWM_GEN_0);
+    PWMGenEnable(PWM0_BASE, PWM_GEN_1);
 
     // Enable the outputs.
     //
-    PWMOutputState(PWM0_BASE, PWM_OUT_0_BIT, true);
+    PWMOutputState(PWM0_BASE, PWM_OUT_2_BIT, true);
 
 
 }

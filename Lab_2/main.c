@@ -22,6 +22,7 @@
 #include "driverlib/rom.h"
 #include "PWM.h"
 #include "Motor_Control.h"
+#include "inc/tm4c123gh6pm.h"
 
 
 
@@ -29,26 +30,27 @@ int main()
 {
     // Perform a PWM display on Pin Connector J3.3
     // View with an Oscilloscope
-    //PWM_Function(800, 200);
+    PWM_Function(800, 800);
 
-    //SysCtlDelay(1000000);
+    while (1)
+    {
+
+    }
 
    // PWM_Function(0, 0);
 
    // SysCtlDelay(10000);
 
 
-    motorForward(800, 100, 800, 100);
-    SysCtlDelay(100000);
+    //motorForward(800, 100, 800, 100);
+   // SysCtlDelay(1000);
 
-    motorStop();
-    SysCtlDelay(100000);
 
-    motorBackward(800, 100, 800, 100);
-    SysCtlDelay(100000);
 
-    motorStop();
-    SysCtlDelay(100000);
+    //motorBackward(800, 100, 800, 100);
+    //SysCtlDelay(1000);
+
+
 
 
 }
