@@ -13,4 +13,6 @@ void motorForward(int period_right, int pulsewidth_right, int period_left, int p
 
 void motorBackward(int period_right, int pulsewidth_right, int period_left, int pulsewidth_left);
 
+void motorStop(void);
+
 #endif /* MOTOR_CONTROL_H_ */

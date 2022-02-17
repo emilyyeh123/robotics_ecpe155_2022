@@ -28,12 +28,14 @@
 
 int main()
 {
-    // Perform a PWM display on Pin Connector J3.3
-    // View with an Oscilloscope
-    PWM_Function(800, 800);
-
+    /*
     while (1)
     {
+    // Perform a PWM display on Pin Connector J3.3
+    // View with an Oscilloscope
+    PWM_Function(800, 200);
+
+
 
     }
 
@@ -41,16 +43,24 @@ int main()
 
    // SysCtlDelay(10000);
 
+*/
+    while (1)
+    {
 
-    //motorForward(800, 100, 800, 100);
-   // SysCtlDelay(1000);
+    motorForward(800, 300, 800, 300);
+    SysCtlDelay(10000000);
+
+    motorStop();
+    SysCtlDelay(10000000);
+
+    motorBackward(800, 300, 800, 300);
+    SysCtlDelay(10000000);
+
+    motorStop();
+    SysCtlDelay(10000000);
 
 
-
-    //motorBackward(800, 100, 800, 100);
-    //SysCtlDelay(1000);
-
-
+    }
 
 
 }
