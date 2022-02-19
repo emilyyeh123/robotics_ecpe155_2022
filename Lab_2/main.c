@@ -1,11 +1,9 @@
 /*
  * Lab_2.c
  *
- *  Created on: Feb 12, 2022
- *      Author: Uri
+ *  Created on: Feb 9, 2022
+ *      Author: Emily
  *
- *      The purpose of this lab is to create a PWM signal from the Tiva Launchpad and demonstrate the
- *      robot's ability to move forward and backward.
  */
 
 #include <stdint.h>
@@ -26,41 +24,17 @@
 
 
 
-int main()
-{
-    /*
-    while (1)
-    {
-    // Perform a PWM display on Pin Connector J3.3
-    // View with an Oscilloscope
-    PWM_Function(800, 200);
+int main(){
+    motor_init(400);
 
+    motorForward(200, 200);
+    SysCtlDelay(10000000);
 
-
-    }
-
-   // PWM_Function(0, 0);
-
-   // SysCtlDelay(10000);
-
-*/
-    while (1)
-    {
-
-    motorForward(800, 300, 800, 300);
+    motorBackward(200, 200);
     SysCtlDelay(10000000);
 
     motorStop();
     SysCtlDelay(10000000);
 
-    motorBackward(800, 300, 800, 300);
-    SysCtlDelay(10000000);
-
-    motorStop();
-    SysCtlDelay(10000000);
-
-
-    }
-
-
+    while (1){}
 }
