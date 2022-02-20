@@ -10,5 +10,11 @@ RemoteSystemsTempFiles
 Debug/
 
 Robot_Library/.*
-Lab_2/*
-Lab_3/*
+
+Lab_2/.*
+Lab_2/targetConfigs/
+Lab_2/tm4c123*
+
+Lab_3/.*
+Lab_3/targetConfigs/
+Lab_3/tm4c123*

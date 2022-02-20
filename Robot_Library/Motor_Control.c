@@ -23,16 +23,18 @@
 
 
 
-void motor_init(uint8_t period){
+void motor_init(uint16_t period){
     PWM_init(period);
 
-    // Enable GPIOE peripheral (in1 & in2)
+    // Enable GPIOE peripheral (in1 & in2) and wait for it to be ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOE)){}
     // set wheel control outputs
     GPIOPinTypeGPIOOutput(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5));
 
-    // Enable GPIOD peripheral (standby)
+    // Enable GPIOD peripheral (standby) and wait for it to be ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOD)){}
     // set standby outputs
     GPIOPinTypeGPIOOutput(GPIO_PORTD_BASE, (GPIO_PIN_0 | GPIO_PIN_1));
     // set standby to active high
@@ -41,7 +43,7 @@ void motor_init(uint8_t period){
 
 
 
-void motorForward(uint8_t PWLeft, uint8_t PWRight){
+void motorForward(uint16_t PWLeft, uint16_t PWRight){
     // set pulse width
     PWM_setPW(PWLeft, PWRight);
 
@@ -57,7 +59,7 @@ void motorForward(uint8_t PWLeft, uint8_t PWRight){
 
 
 
-void motorBackward(uint8_t PWLeft, uint8_t PWRight){
+void motorBackward(uint16_t PWLeft, uint16_t PWRight){
     // set pulse width
     PWM_setPW(PWLeft, PWRight);
 

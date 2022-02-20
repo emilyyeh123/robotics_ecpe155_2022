@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <stdlib.h>
 
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -22,7 +23,6 @@
 #include "PWM.h"
 #include "Motor_Control.h"
 
-int main(void)
-{
-	return 0;
+int main(void){
+    while(1){}
 }

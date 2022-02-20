@@ -27,7 +27,7 @@
 int main(){
     motor_init(400);
 
-    motorForward(200, 200);
+    motorForward(100, 100);
     SysCtlDelay(10000000);
 
     motorBackward(200, 200);

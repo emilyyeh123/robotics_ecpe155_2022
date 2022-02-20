@@ -21,16 +21,22 @@
 
 
 
-void PWM_init(uint8_t period){
-    // Enable the PWM0 module and wait for it to be ready
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0)){}
+void PWM_init(uint16_t period){
     // Enable the GPIOB module and wait for it to be ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB)){}
 
+    // set PB6 & PB7 as outputs
+    GPIOPinTypePWM(GPIO_PORTB_BASE, (GPIO_PIN_6 | GPIO_PIN_7));
+    GPIOPinConfigure(GPIO_PB6_M0PWM0);
+    GPIOPinConfigure(GPIO_PB7_M0PWM1);
+
     // set pwm clock
     SysCtlPWMClockSet(SYSCTL_PWMDIV_1);
+
+    // Enable the PWM0 module and wait for it to be ready
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0)){}
 
     // Configure the PWM generator for count down mode with immediate updates to the parameters.
     // set generator 0 for both wheels (PWM0 & PWM1)
@@ -41,20 +47,20 @@ void PWM_init(uint8_t period){
     // Use this value to set the period.
     PWMGenPeriodSet(PWM0_BASE, PWM_GEN_0, period);
 
-    // set duty cycle for M0PWM1 & M0PWM2
+    // set duty cycle for M0PWM0 & M0PWM1
     PWMPulseWidthSet(PWM0_BASE, PWM_OUT_1, period); // left wheel
     PWMPulseWidthSet(PWM0_BASE, PWM_OUT_0, period); // right wheel
 
     // Start the timer in generator 0
     PWMGenEnable(PWM0_BASE, PWM_GEN_0);
 
-    // Enable the outputs for M0PWM1 & M0PWM2
-    PWMOutputState(PWM0_BASE, (PWM_OUT_1_BIT | PWM_OUT_2_BIT), true);
+    // Enable the outputs for M0PWM0 & M0PWM1
+    PWMOutputState(PWM0_BASE, (PWM_OUT_1_BIT | PWM_OUT_0_BIT), true);
 }
 
 
 
-void PWM_setPW(uint8_t PWL, uint8_t PWR){
+void PWM_setPW(uint16_t PWL, uint16_t PWR){
     // modify duty cycle for M0PWM0 & M0PWM1
     PWMPulseWidthSet(PWM0_BASE, PWM_OUT_1, PWL); // left wheel
     PWMPulseWidthSet(PWM0_BASE, PWM_OUT_0, PWR); // right wheel
