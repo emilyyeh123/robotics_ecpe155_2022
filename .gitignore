@@ -9,6 +9,8 @@ TivaWare/
 RemoteSystemsTempFiles
 Debug/
 
+~$pin_planner.xlsx
+
 Robot_Library/.*
 
 Lab_2/.*

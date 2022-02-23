@@ -22,21 +22,21 @@
 
 
 void PWM_init(uint16_t period){
+    // Enable the PWM0 module and wait for it to be ready
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0)){}
+
     // Enable the GPIOB module and wait for it to be ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB)){}
 
     // set PB6 & PB7 as outputs
     GPIOPinTypePWM(GPIO_PORTB_BASE, (GPIO_PIN_6 | GPIO_PIN_7));
-    GPIOPinConfigure(GPIO_PB6_M0PWM0);
-    GPIOPinConfigure(GPIO_PB7_M0PWM1);
+    GPIOPinConfigure(GPIO_PB7_M0PWM1); // left wheel
+    GPIOPinConfigure(GPIO_PB6_M0PWM0); // right wheel
 
     // set pwm clock
     SysCtlPWMClockSet(SYSCTL_PWMDIV_1);
-
-    // Enable the PWM0 module and wait for it to be ready
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0)){}
 
     // Configure the PWM generator for count down mode with immediate updates to the parameters.
     // set generator 0 for both wheels (PWM0 & PWM1)
