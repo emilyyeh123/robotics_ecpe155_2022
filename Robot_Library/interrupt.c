@@ -22,10 +22,9 @@
 
 
 void initQEInterrupt(){
+    // Using PA3 and PA4 for QEA and QEB on left wheel
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA)) {}
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)) {}
 
     // Register the port-level interrupt handler. This handler is the first level interrupt handler for all the pin interrupts
     GPIOIntRegister(GPIO_PORTA_BASE, QEInterruptHandler);
@@ -36,29 +35,38 @@ void initQEInterrupt(){
     // Set pins for input signal from encoder
     GPIOIntTypeSet(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4), GPIO_BOTH_EDGES);
 
-    // Set the output pins that control the LED
+    // Enable GPIOF for LED control
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)) {}
+    // Set the output pins that control the LED: PF1 - red, PF2 - blue, PF3 - green
     GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2);
 
     // Enable the Interrupts
     GPIOIntEnable(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4);
     GPIOIntEnable(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2);
-
-    IntMasterEnable();
 }
 
 
 void QEInterruptHandler(){
+    count = 0;
+
     if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3)){
-        // When one signal is high
+        // When one signal is high, turn on Red LED
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
+        // increment count
+        count++;
     }else if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3) == GPIO_PIN_3 && GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_4) == GPIO_PIN_4){
-        // When both signals are high
+        // When both signals are high, turn on Blue LED
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
     }else{
-        // When both signals are low
+        // Otherwise, when both signals are low, turn off both LEDS
         GPIOPinWrite(GPIO_PORTF_BASE, (GPIO_PIN_1 | GPIO_PIN_2), 0);
     }
 
     // clear interrupt
     GPIOIntClear(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4));
+}
+
+uint8_t getCount(){
+    return count;
 }

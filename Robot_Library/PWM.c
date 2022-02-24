@@ -9,27 +9,18 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
+#include "inc/hw_gpio.h"
+#include "inc/tm4c123gh6pm.h"
+
+#include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/gpio.h"
 #include "driverlib/debug.h"
 #include "driverlib/pwm.h"
-#include "driverlib/pin_map.h"
-#include "inc/hw_gpio.h"
-#include "driverlib/rom.h"
-#include "inc/tm4c123gh6pm.h"
 
-
-/*void initPWM(uint16_t period){
-    // Enable PWM Module 0 (for M0PWM2 & M0PWM1) and wait for it to be ready
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0)){}
-
-    // Enable GPIO B and wait for it to be ready
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB)){}
-}*/
 
 
 void initPWM(uint16_t period){
@@ -40,9 +31,6 @@ void initPWM(uint16_t period){
     // Enable the GPIOB peripheral (for PB7 & PB4) and wait for it to be ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB)){}
-
-    // set pwm clock
-    // SysCtlPWMClockSet(SYSCTL_PWMDIV_1);
 
     // Set up LEFT wheel (M0PWM1, PB7, Generator 0)
     GPIOPinTypePWM(GPIO_PORTB_BASE, GPIO_PIN_7); // set PB7 as output
