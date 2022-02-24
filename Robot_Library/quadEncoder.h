@@ -9,9 +9,12 @@
 #define QUADENCODER_H_
 
 
-void quadEnc_init();
-uint32_t getVelocityLeft();
-uint32_t getVelocityRight();
+//void quadEnc_init();
+//uint32_t getVelocityLeft();
+//uint32_t getVelocityRight();
+
+void initQE();
+void QEIntHandler();
 
 
 #endif /* QUADENCODER_H_ */

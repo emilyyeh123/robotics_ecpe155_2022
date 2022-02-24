@@ -44,8 +44,8 @@ int main(){
     motorStop();
     SysCtlDelay(10000000);
 
-    motorBackward(800, 800, 200, 200);
-    SysCtlDelay(10000000);
+    //motorBackward(800, 200, 800, 200);
+    //SysCtlDelay(10000000);
 
 
     while (1){}

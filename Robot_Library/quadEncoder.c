@@ -22,6 +22,7 @@
 
 #include "quadEncoder.h"
 
+/*
 // use a quadrature encoder to measure the speed of one wheel of your robot
 void quadEnc_init(){
     // Enable the QEI0A & QEAI1A modules and wait for them to be ready
@@ -37,7 +38,6 @@ void quadEnc_init(){
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOC)){}
 
-    /*
     // Configure the quadrature encoder to capture edges on both signals and maintain an absolute position by resetting on index pulses.
     // Using a 1000 line encoder at four edges per line, there are 4000 pulses per revolution;
     // therefore set the maximum position to 3999 as the count is zero based.
@@ -49,7 +49,6 @@ void quadEnc_init(){
     // Enable the quadrature encoder.
     QEIEnable(QEI0_BASE);
     QEIEnable(QEI1_BASE);
-    */
 
     // configure QE velocity
     QEIVelocityConfigure(QEI0_BASE, QEI_VELDIV_1, 100);
@@ -68,4 +67,27 @@ uint32_t getVelocityLeft(){
 
 uint32_t getVelocityRight(){
     return QEIVelocityGet(QEI1_BASE);
+}
+*/
+
+
+void initQE(){
+    //setup & initialize
+
+    /*
+    while(1){
+        if(flag){
+            motor stuff
+            flag = 0;
+        }
+    }
+    */
+
+    // (GPIO_Read(port, GPIO_PIN_0) == GPIO_PIN_0) && (GPIO_Read(port, GPIO_PIN_2) == GPIO_PIN_2)
+
+}
+
+void QEIntHandler(){
+    //set flag
+    //clear int
 }
