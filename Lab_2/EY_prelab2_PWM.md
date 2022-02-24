@@ -20,9 +20,31 @@ Enable PWM0 peripheral <br>
 Wait for the PWM0 module to be ready. <br>
 `while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0)){}`
 
+Enable & wait for GPIOB
 
+set pins as outputs <br>
+`GPIOPinTypePWM(port_base, pin)` <br>
+`GPIOPinConfigure(pin_PWM)`
 
+configure generator <br>
+`PWMGenConfigure(pwm_base, pwm_generator, period)`
+
+set period <br>
+`PWMGenPeriodSet(PWM_Base, PWM_generator, period)`
+
+set duty cycle <br>
+`PWMPulseWidthSet(pwm_base, pwmOutBit, pulseWidth)`
+
+enable output <br>
+`PWMOutputState(pwm_base, pwmOutBit, true)`
+
+start generator timer
+`PWMGenEnable(pwm_base, pwmGenerator)`
+
+## helpful info
 **Duty Cycle changes speed of wheel**
 - think fsm clock
 - falling edge to next falling edge is 100%
 - higher duty cycle = faster wheel speed
+
+**Make sure to setup both wheels and have a way to modify the duty cycles**

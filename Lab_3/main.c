@@ -27,14 +27,15 @@
 
 int main(){
     initQEInterrupt();
+    initMotor(800);
 
-    motorForward(800, 300, 800, 300);
+    motorForward(200, 200);
+    SysCtlDelay(10000000);
+
+    motorBackward(600, 600);
     SysCtlDelay(10000000);
 
     motorStop();
-    SysCtlDelay(10000000);
-
-    motorBackward(800, 200, 800, 200);
     SysCtlDelay(10000000);
 
     while(1){}
