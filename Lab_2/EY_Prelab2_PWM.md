@@ -5,7 +5,7 @@ In the data sheet:
 - General PWM information found in section 20
 - From Table 20-1, pg 1233
   - Choose PWM Master Control `PWM0` = `PB6`
-  - Choose PWM Master Control `PWM1 = `PB7'
+  - Choose PWM Master Control `PWM1` = `PB7`
 
 In Peripheral Driver Library
 - Section 21.3 gives a PWM programming example
@@ -38,13 +38,13 @@ set duty cycle <br>
 enable output <br>
 `PWMOutputState(pwm_base, pwmOutBit, true)`
 
-start generator timer
+start generator timer <br>
 `PWMGenEnable(pwm_base, pwmGenerator)`
 
 ## helpful info
+**Make sure to setup both wheels and have a way to modify the duty cycles** 
+
 **Duty Cycle changes speed of wheel**
 - think fsm clock
 - falling edge to next falling edge is 100%
 - higher duty cycle = faster wheel speed
-
-**Make sure to setup both wheels and have a way to modify the duty cycles**
