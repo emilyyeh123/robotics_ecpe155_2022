@@ -21,36 +21,62 @@
 #include "inc/tm4c123gh6pm.h"
 
 
-void PWM_Function(uint16_t period, uint16_t pulsewidth)
-{
-    // Enable the 16MHz crystal in the main oscillator. The precision clock runs at a natural 400MHz
-    // the system automatically divides by 2 so we code another divide by 5 to get a total of 40 MHz
-    SysCtlClockSet(SYSCTL_SYSDIV_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
-
-    // Enable the PWM0 and GPIO B peripheral modules
+/*void initPWM(uint16_t period){
+    // Enable PWM Module 0 (for M0PWM2 & M0PWM1) and wait for it to be ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0)){}
+
+    // Enable GPIO B and wait for it to be ready
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB)){}
+}*/
+
+
+void initPWM(uint16_t period){
+    // Enable PWM Module 0 (for M0PWM1 & M0PWM2) and wait for it to be ready
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM0);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_PWM0)){}
+
+    // Enable the GPIOB peripheral (for PB7 & PB4) and wait for it to be ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB)){}
 
-    // Configure the pins for PWM signal
-    GPIOPinTypePWM(GPIO_PORTB_BASE, GPIO_PIN_4);
-    GPIOPinConfigure(GPIO_PB4_M0PWM2); // Configure pin 7 at connector J1.7 for Motion Control Module 0 PWM 2 Generator 1
+    // set pwm clock
+    // SysCtlPWMClockSet(SYSCTL_PWMDIV_1);
 
-    // Configure the PWM generator for count down mode
-    PWMGenConfigure(PWM0_BASE, PWM_GEN_1, PWM_GEN_MODE_DOWN);
+    // Set up LEFT wheel (M0PWM1, PB7, Generator 0)
+    GPIOPinTypePWM(GPIO_PORTB_BASE, GPIO_PIN_7); // set PB7 as output
+    GPIOPinConfigure(GPIO_PB7_M0PWM1);
+    // Configure PWM generator for count down mode with immediate updates to the parameters.
+    PWMGenConfigure(PWM0_BASE, PWM_GEN_0, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
+    // Set the period
+    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_0, period);
+    // set duty cycle
+    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_1, period);
+    // Enable the output
+    PWMOutputState(PWM0_BASE, PWM_OUT_1_BIT, true);
+    // Start timer in generator
+    PWMGenEnable(PWM0_BASE, PWM_GEN_0);
 
-    // Set the period. For a 50 KHz frequency, the period = 1/50,000, or 20
-    // microseconds. For a 40 MHz clock, this translates to 800 clock ticks.
-    // Use this value to set the period.
-    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_1, period); //period of about 20 microseconds
-
-    // Set the pulse width of PWM2. Ensure that PWM_OUT is the same number as M0PWM2!
-    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_2, pulsewidth);
-
-    // Enable the outputs. Ensure that PWM_OUT is the same number as M0PWM2!
+    // Set up RIGHT wheel (M0PWM2, PB4, Generator 1)
+    GPIOPinTypePWM(GPIO_PORTB_BASE, GPIO_PIN_4); // set PB7 as output
+    GPIOPinConfigure(GPIO_PB4_M0PWM2);
+    // Configure PWM generator for count down mode with immediate updates to the parameters.
+    PWMGenConfigure(PWM0_BASE, PWM_GEN_1, PWM_GEN_MODE_DOWN | PWM_GEN_MODE_NO_SYNC);
+    // Set the period
+    PWMGenPeriodSet(PWM0_BASE, PWM_GEN_1, period);
+    // set duty cycle
+    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_2, period);
+    // Enable the output
     PWMOutputState(PWM0_BASE, PWM_OUT_2_BIT, true);
-
-    // Start the timers in generator 1
+    // Start timer in generator
     PWMGenEnable(PWM0_BASE, PWM_GEN_1);
+}
+
+
+
+void setPW(uint16_t PWL, uint16_t PWR){
+    // modify duty cycle for M0PWM1 & M0PWM2
+    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_1, PWL); // left wheel
+    PWMPulseWidthSet(PWM0_BASE, PWM_OUT_2, PWR); // right wheel
 }

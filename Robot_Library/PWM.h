@@ -9,7 +9,7 @@
 #define PWM_H_
 
 
-void PWM_Function(uint16_t period, uint16_t pulsewidth);
-
+void initPWM(uint16_t period);
+void setPW(uint16_t PWL, uint16_t PWR);
 
 #endif /* PWM_H_ */

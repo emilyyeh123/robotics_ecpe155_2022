@@ -19,23 +19,22 @@
 #include "driverlib/debug.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/pwm.h"
-#include "driverlib/qei.h"
+#include "driverlib/interrupt.h"
 
 #include "PWM.h"
 #include "Motor_Control.h"
-#include "quadEncoder.h"
+#include "interrupt.h"
 
-int main(void){
-    quadEnc_init();
-    motor_init(400);
+int main(){
+    initQEInterrupt();
 
-    motorForward(100, 100);
+    motorForward(800, 300, 800, 300);
     SysCtlDelay(10000000);
 
-    uint32_t leftV = getVelocityLeft();
-    uint32_t rightV = getVelocityRight();
-
     motorStop();
+    SysCtlDelay(10000000);
+
+    motorBackward(800, 200, 800, 200);
     SysCtlDelay(10000000);
 
     while(1){}

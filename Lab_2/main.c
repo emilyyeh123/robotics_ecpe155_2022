@@ -25,28 +25,19 @@
 
 
 int main(){
+    // For a 50 KHz frequency, the period = 1/50,000, or 20 microseconds.
+    // For a 20 MHz clock, this translates to 400 clock ticks.
 
-    motorForward(800, 200, 800, 200);
+    initMotor(800);
+
+    motorForward(200, 200);
+    SysCtlDelay(10000000);
+
+    motorBackward(600, 600);
     SysCtlDelay(10000000);
 
     motorStop();
     SysCtlDelay(10000000);
-
-    motorForward(800, 100, 800, 100);
-    SysCtlDelay(10000000);
-
-    motorStop();
-    SysCtlDelay(10000000);
-
-    motorForward(800, 300, 800, 300);
-    SysCtlDelay(10000000);
-
-    motorStop();
-    SysCtlDelay(10000000);
-
-    //motorBackward(800, 200, 800, 200);
-    //SysCtlDelay(10000000);
-
 
     while (1){}
 }
