@@ -8,7 +8,8 @@
 #ifndef PWM_H_
 #define PWM_H_
 
-void PWM_init(int period);
-void PWM_setPW(uint16_t PWL, uint16_t PWR);
+
+void PWM_Function(uint16_t period, uint16_t pulsewidth);
+
 
 #endif /* PWM_H_ */
