@@ -25,16 +25,29 @@
 
 
 int main(){
-    motor_init(400);
 
-    motorForward(200, 200);
-    SysCtlDelay(10000000);
 
-    motorBackward(200, 200);
+    motorForward(800, 200, 800, 200);
     SysCtlDelay(10000000);
 
     motorStop();
     SysCtlDelay(10000000);
+
+    motorForward(800, 100, 800, 100);
+    SysCtlDelay(10000000);
+
+    motorStop();
+    SysCtlDelay(10000000);
+
+    motorForward(800, 300, 800, 300);
+    SysCtlDelay(10000000);
+
+     motorStop();
+     SysCtlDelay(10000000);
+
+     motorBackward(800, 800, 200, 200);
+     SysCtlDelay(50000000);
+
 
     while (1){}
 }

@@ -8,9 +8,8 @@
 #ifndef MOTOR_CONTROL_H_
 #define MOTOR_CONTROL_H_
 
-void motor_init(uint8_t period);
-void motorForward(uint8_t PWLeft, uint8_t PWRight);
-void motorBackward(uint8_t PWLeft, uint8_t PWRight);
+void motorForward(uint16_t period_right, uint16_t pulsewidth_right, uint16_t period_left, uint16_t pulsewidth_left);
+void motorBackward(uint16_t period_right, uint16_t pulsewidth_right, uint16_t period_left, uint16_t pulsewidth_left);
 void motorStop();
 
 #endif /* MOTOR_CONTROL_H_ */
