@@ -25,15 +25,10 @@
 #include "Motor_Control.h"
 #include "interrupt.h"
 
-// define global var in main
-uint8_t count;
 
 int main(){
     initQEInterrupt();
     initMotor(800);
-
-    // set global var
-    // count = 0;
 
     motorForward(300, 300);
     SysCtlDelay(10000000);
@@ -43,8 +38,6 @@ int main(){
 
     motorStop();
     SysCtlDelay(10000000);
-
-    uint8_t returnCount = getCount();
 
     while(1){}
 }

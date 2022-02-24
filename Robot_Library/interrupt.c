@@ -48,13 +48,9 @@ void initQEInterrupt(){
 
 
 void QEInterruptHandler(){
-    count = 0;
-
     if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3)){
         // When one signal is high, turn on Red LED
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
-        // increment count
-        count++;
     }else if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3) == GPIO_PIN_3 && GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_4) == GPIO_PIN_4){
         // When both signals are high, turn on Blue LED
         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
@@ -65,8 +61,4 @@ void QEInterruptHandler(){
 
     // clear interrupt
     GPIOIntClear(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4));
-}
-
-uint8_t getCount(){
-    return count;
 }
