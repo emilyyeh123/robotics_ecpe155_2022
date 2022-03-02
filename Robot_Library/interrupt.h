@@ -9,11 +9,15 @@
 #define INTERRUPT_H_
 
 
-extern uint8_t revCount; // define global var
+// declare global vars
+extern uint8_t revCountLeft;
+extern uint8_t revCountRight;
+
 
 void initQEInterrupt();
 void QEInterruptHandler();
-uint8_t getRevCount();
+uint8_t getRevCountLeft();
+uint8_t getRevCountRight();
 
 
 #endif /* INTERRUPT_H_ */

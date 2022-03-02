@@ -1,5 +1,3 @@
-
-
 /**
  * Lab 3 main.c
  */
@@ -27,11 +25,8 @@
 #include "interrupt.h"
 
 
-uint8_t revCount; // global var counts revolutions using QEInterrupt
 
 int main(){
-    revCount = 0;
-
     initQEInterrupt();
     initMotor(800);
 
@@ -43,11 +38,6 @@ int main(){
 
     motorStop();
     SysCtlDelay(10000000);
-
-    uint8_t returnCount = getRevCount();
-
-
-    // use ICR to get to specific positions
 
     while(1){}
 }
