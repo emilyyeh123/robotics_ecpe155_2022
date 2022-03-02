@@ -13,7 +13,7 @@ In [interrupt.c](Robot_Library/interrupt.c), we created a QE interrupt handler t
 
 
 
-## Measuring Displacement
+## Measuring Distance
 - The number of ticks in one revolution is 64 with both edges, one signal
 - The circumference of a circle is equal to 2 * pi * r
 - The radius of each wheel is 3cm, so the circumference of each wheel is about 18.85cm
@@ -26,7 +26,9 @@ Velocity will require the use of timers.*
 
 
 ## Implementing Positioning
-- Set count variables to 0 in initQEInterrupt function
+- initialize count variables to 0 in initQEInterrupt function
+- declare global variable `totalRev` to keep track of total revolutions (initialize to 0 in initQEInterrupt)
+  - resets anytime there's a direction change 
 - Modify Interrupt Handler:
   - Instead of flashing LED at every tick, display LED every time wheel has achieved one revolution.
     - if one revolution, reset count to 0 and display led; otherwise, continue incrementing count<br>
@@ -37,6 +39,26 @@ Velocity will require the use of timers.*
       else
         count++
       ```
+    - alternatively can wait until both wheels have gone a full revolution (due to imperfect hardware, counts may be slightly off);
+      this can be implemented to the end of the handler
+      ```
+      if leftCount > 63 && rightCount > 63
+        display led
+        totalRev++ // increment total revolutions
+        set right & left count to 0 // reset left and right counts to zero
+      ```
+      - with this, we would be able to claim that the system has moved approximately 18.85 cm (+/- error) everytime we see the LED flash
+  - Create function that takes in specific distance and stops robot at specified distance
+    ```
+    moveDist(int distance) // maybe make int 16 bits?
+      fullRevs = distance/18.85 // defines the amount of full revolutions to move
+      excessDistance = distance % 18.85 // defines excess distance
+      excessRev = excessDistance*64 / 18.85 // multiply excess distance by 64 ticks and divide by circumference to get excess revolutions
+
+      if(totalRev == fullRevs)
+        if leftCount > excessRev && rightCount > excessRev
+          stopmotor
+    ```
 
 
 
