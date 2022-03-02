@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <math.h>
 
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -81,3 +82,50 @@ void motorStop(){
     // stop/brake in1 & in2 High - set all 4 pins high
     GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5), (GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5));
 }
+
+
+
+// return global position after some time t
+// diameter (cm), length (cm), phi (rad/s), time (s),
+// initial position parameter is a 1x3 matrix
+/*void ICRPosition(uint8_t d, uint8_t l, uint8_t phi1, uint8_t phi2, uint8_t time, initialPos){
+    // initial conditions
+    r = d/2; // radius (cm)
+    w = ( (r*phi1) / (2*l) ) - ( (r*phi2) / (2*l) );
+    R = ( l * (phi1 + phi2) ) / (phi1 - phi2);
+}*/
+
+/*
+% diameter (cm), length (cm), phi (rad/s), time (s),
+% initial position 1x3 matrix
+function [Eg] = ICRmatrix(d, l, phi1, phi2, time, initialPos)
+    % initial conditions
+    r = d/2; % radius (cm)
+    w = ( (r*phi1) / (2*l) ) - ( (r*phi2) / (2*l) );
+    R = ( l * (phi1 + phi2) ) / (phi1 - phi2);
+
+    % setting initial positions
+    x = initialPos(1);
+    y = initialPos(2);
+    theta = initialPos(3);
+
+    Eg = [R*cos(w*time)*sin(theta)+R*sin(w*time)*cos(theta)+x-R*sin(theta);
+          R*sin(w*time)*sin(theta)-R*cos(w*time)*cos(theta)+y+R*cos(theta);
+          theta+w*time];
+end
+
+% ICR when both wheels have the same speed
+function [Eg] = ICRmatrixSameWheel(d, l, phi, time, initialPos)
+    % initial conditions
+    r = d/2; % radius (cm)
+
+    % setting initial positions
+    x = initialPos(1);
+    y = initialPos(2);
+    theta = initialPos(3);
+
+    Eg = [x+r*time*phi*cos(theta);
+          y+r*time*phi*sin(theta);
+          theta];
+end
+*/

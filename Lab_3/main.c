@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -26,7 +27,11 @@
 #include "interrupt.h"
 
 
+uint8_t revCount; // global var counts revolutions using QEInterrupt
+
 int main(){
+    revCount = 0;
+
     initQEInterrupt();
     initMotor(800);
 
@@ -38,6 +43,11 @@ int main(){
 
     motorStop();
     SysCtlDelay(10000000);
+
+    uint8_t returnCount = getRevCount();
+
+
+    // use ICR to get to specific positions
 
     while(1){}
 }
