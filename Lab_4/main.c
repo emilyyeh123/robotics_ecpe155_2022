@@ -24,15 +24,15 @@
 
 #include "PWM.h"
 #include "Motor_Control.h"
-#include "interrupt.h"
-#include "sensor.h"
 #include "LED.h"
+#include "quadEncoder.h"
+#include "bumpSensor.h"
 
 
 
 int main(){
     initQEInterrupt();
-    initSensorInterrupt();
+    initBumpSensorInterrupt();
     initLED();
     initMotor(800);
 

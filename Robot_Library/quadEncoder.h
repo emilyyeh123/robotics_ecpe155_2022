@@ -5,8 +5,8 @@
  *      Author: Uri
  */
 
-#ifndef INTERRUPT_H_
-#define INTERRUPT_H_
+#ifndef QUADENCODER_H_
+#define QUADENCODER_H_
 
 
 // declare global vars
@@ -20,4 +20,4 @@ uint16_t getRevCountRight();
 void clearCount();
 
 
-#endif /* INTERRUPT_H_ */
+#endif /* QUADENCODER_H_ */

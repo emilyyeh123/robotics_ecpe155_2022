@@ -21,9 +21,9 @@
 #include "driverlib/pin_map.h"
 #include "driverlib/pwm.h"
 
-#include "interrupt.h"
 #include "Motor_Control.h"
 #include "PWM.h"
+#include "quadEncoder.h"
 
 uint16_t revCountLeft;
 uint16_t revCountRight;

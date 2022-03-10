@@ -25,7 +25,7 @@
 
 #include "PWM.h"
 #include "Motor_Control.h"
-#include "interrupt.h"
+#include "quadEncoder.h"
 
 
 // Initialize the motor

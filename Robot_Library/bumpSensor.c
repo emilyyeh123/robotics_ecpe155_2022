@@ -21,19 +21,19 @@
 #include "driverlib/gpio.h"
 #include "driverlib/debug.h"
 
-#include "sensor.h"
 #include "LED.h"
 #include "motor_control.h"
+#include "bumpSensor.h"
 
 
 
-void initSensorInterrupt(){
+void initBumpSensorInterrupt(){
     // set up PB6 for left wheel bumper
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOB)){}
 
     // Register the port-level interrupt handler. This handler is the first level interrupt handler for all the pin interrupts
-    GPIOIntRegister(GPIO_PORTB_BASE, sensorInterruptHandler);
+    GPIOIntRegister(GPIO_PORTB_BASE, bumpSensorInterruptHandler);
 
     // Set Input pins to read sensor data
     GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, GPIO_PIN_6);
@@ -47,7 +47,7 @@ void initSensorInterrupt(){
     GPIOIntEnable(GPIO_PORTB_BASE, GPIO_PIN_6);
 }
 
-void sensorInterruptHandler(){
+void bumpSensorInterruptHandler(){
     // clear interrupt
     GPIOIntClear(GPIO_PORTB_BASE, GPIO_PIN_6);
 
