@@ -10,14 +10,14 @@
 
 
 // declare global vars
-extern uint8_t revCountLeft;
-extern uint8_t revCountRight;
-
+extern uint16_t revCountLeft;
+extern uint16_t revCountRight;
 
 void initQEInterrupt();
 void QEInterruptHandler();
-uint8_t getRevCountLeft();
-uint8_t getRevCountRight();
+uint16_t getRevCountLeft();
+uint16_t getRevCountRight();
+void clearCount();
 
 
 #endif /* INTERRUPT_H_ */

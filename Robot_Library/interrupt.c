@@ -19,12 +19,14 @@
 #include "driverlib/timer.h"
 #include "driverlib/debug.h"
 #include "driverlib/pin_map.h"
+#include "driverlib/pwm.h"
 
 #include "interrupt.h"
-#include "LED.h"
+#include "Motor_Control.h"
+#include "PWM.h"
 
-uint8_t revCountLeft;
-uint8_t revCountRight;
+uint16_t revCountLeft;
+uint16_t revCountRight;
 
 void initQEInterrupt(){
     // initialize count variables
@@ -45,35 +47,58 @@ void initQEInterrupt(){
     // checking for both edges, so 64 ticks is one revolution
     GPIOIntTypeSet(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_2), GPIO_BOTH_EDGES);
 
+    // Enable GPIOF for LED control
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)) {}
+    // Set the output pins that control the LED: PF1 - red, PF2 - blue, PF3 - green
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2);
+
     // Enable the Interrupts
     GPIOIntEnable(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4);
 }
 
 void QEInterruptHandler(){
-    // clear interrupt
-    GPIOIntClear(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4));
+
 
     // LEFT WHEEL - if QEA signal is high
     if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3) == GPIO_PIN_3){
-        // turn on Red LED and increment left count var
-        //displayRedLED();
+
+        // increment left count variable
         revCountLeft++;
     }
 
     // RIGHT WHEEL - if QEA signal is high
     if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2) == GPIO_PIN_2){
-        // turn on Blue LED and increment right count var
-        //displayBlueLED();
+
+        // increment Right count variable
         revCountRight++;
     }
+
+
+    // When the robot has traveled about 40 cm turn right
+    if((revCountLeft >= 150) && (revCountRight >= 150)) {
+        //motorLeftTurn90();
+
+        motorStop();
+        // Reset the counters
+        revCountLeft = 0;
+        revCountRight = 0;
+    }
+
+
+    // clear interrupt
+    GPIOIntClear(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4));
 }
 
-
-
-uint8_t getRevCountLeft(){
+uint16_t getRevCountLeft(){
     return revCountLeft;
 }
 
-uint8_t getRevCountRight(){
+uint16_t getRevCountRight(){
     return revCountRight;
+}
+
+void clearCount(){
+    revCountLeft = 0;
+    revCountRight = 0;
 }
