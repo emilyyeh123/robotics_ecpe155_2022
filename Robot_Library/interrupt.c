@@ -21,6 +21,7 @@
 #include "driverlib/pin_map.h"
 
 #include "interrupt.h"
+#include "LED.h"
 
 uint8_t revCountLeft;
 uint8_t revCountRight;
@@ -32,7 +33,7 @@ void initQEInterrupt(){
 
     // Using PA3 and PA4 for QEA and QEB on left wheel
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA)) {}
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA)){}
 
     // Register the port-level interrupt handler. This handler is the first level interrupt handler for all the pin interrupts
     GPIOIntRegister(GPIO_PORTA_BASE, QEInterruptHandler);
@@ -44,15 +45,8 @@ void initQEInterrupt(){
     // checking for both edges, so 64 ticks is one revolution
     GPIOIntTypeSet(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_2), GPIO_BOTH_EDGES);
 
-    // Enable GPIOF for LED control
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)) {}
-    // Set the output pins that control the LED: PF1 - red, PF2 - blue, PF3 - green
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2);
-
     // Enable the Interrupts
     GPIOIntEnable(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4);
-    GPIOIntEnable(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2);
 }
 
 void QEInterruptHandler(){
@@ -62,14 +56,14 @@ void QEInterruptHandler(){
     // LEFT WHEEL - if QEA signal is high
     if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3) == GPIO_PIN_3){
         // turn on Red LED and increment left count var
-        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, GPIO_PIN_1);
+        //displayRedLED();
         revCountLeft++;
     }
 
     // RIGHT WHEEL - if QEA signal is high
     if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2) == GPIO_PIN_2){
         // turn on Blue LED and increment right count var
-        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, GPIO_PIN_2);
+        //displayBlueLED();
         revCountRight++;
     }
 }
