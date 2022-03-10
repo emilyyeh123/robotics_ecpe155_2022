@@ -21,13 +21,12 @@
 #include "driverlib/pin_map.h"
 #include "driverlib/pwm.h"
 
-#include "interrupt.h"
 #include "Motor_Control.h"
 #include "PWM.h"
+#include "quadEncoder.h"
 
 uint16_t revCountLeft;
 uint16_t revCountRight;
-
 
 void initQEInterrupt(){
     // initialize count variables
@@ -36,7 +35,7 @@ void initQEInterrupt(){
 
     // Using PA3 and PA4 for QEA and QEB on left wheel
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA)) {}
+    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOA)){}
 
     // Register the port-level interrupt handler. This handler is the first level interrupt handler for all the pin interrupts
     GPIOIntRegister(GPIO_PORTA_BASE, QEInterruptHandler);
@@ -44,11 +43,9 @@ void initQEInterrupt(){
     // Set Input pins to read encoder data
     GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_2));
 
-
     // Set pins for input signal from encoder
     // checking for both edges, so 64 ticks is one revolution
     GPIOIntTypeSet(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_2), GPIO_BOTH_EDGES);
-
 
     // Enable GPIOF for LED control
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
@@ -58,11 +55,7 @@ void initQEInterrupt(){
 
     // Enable the Interrupts
     GPIOIntEnable(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4);
-    GPIOIntEnable(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2);
 }
-
-
-
 
 void QEInterruptHandler(){
 
@@ -94,11 +87,8 @@ void QEInterruptHandler(){
 
 
     // clear interrupt
-        GPIOIntClear(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4));
-
+    GPIOIntClear(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4));
 }
-
-
 
 uint16_t getRevCountLeft(){
     return revCountLeft;

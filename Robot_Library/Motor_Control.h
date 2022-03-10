@@ -8,6 +8,7 @@
 #ifndef MOTOR_CONTROL_H_
 #define MOTOR_CONTROL_H_
 
+
 void initMotor(uint16_t period);
 void motorForward(uint16_t PWLeft, uint16_t PWRight);
 void motorBackward(uint16_t PWLeft, uint16_t PWRight);
@@ -21,5 +22,6 @@ void motorRightTurn45();
 void motorLeftTurn45();
 void motorAvoidLeftBump();
 void motorAvoidRightBump();
+
 
 #endif /* MOTOR_CONTROL_H_ */

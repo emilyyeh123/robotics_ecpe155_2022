@@ -1,5 +1,7 @@
+
+
 /**
- * Lab 3 main.c
+ * main.c
  */
 
 #include <stdint.h>
@@ -22,28 +24,29 @@
 
 #include "PWM.h"
 #include "Motor_Control.h"
-#include "interrupt.h"
+#include "LED.h"
+#include "quadEncoder.h"
+#include "bumpSensor.h"
 
 
 
 int main(){
     initQEInterrupt();
+    initBumpSensorInterrupt();
+    initLED();
     initMotor(800);
-    revCountRight = 0;
-    revCountLeft = 0;
 
-    motorForward(200,200);
-    SysCtlDelay(5000000);
+    motorForward(300, 300);
+    SysCtlDelay(10000000);
+    clearLED();
 
-    while(1){
-/*
-        motorCorrection();
-        SysCtlDelay(500);
+    motorBackward(500, 500);
+    SysCtlDelay(10000000);
+    clearLED();
 
-        motorRect(50, 20);
-*/
-        motorAvoidLeftBump();
-        motorAvoidRightBump();
-    }
+    motorStop();
+    SysCtlDelay(10000000);
 
+    while(1){}
 }
+
