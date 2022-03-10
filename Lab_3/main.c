@@ -29,15 +29,21 @@
 int main(){
     initQEInterrupt();
     initMotor(800);
+    revCountRight = 0;
+    revCountLeft = 0;
 
-    motorForward(300, 300);
-    SysCtlDelay(10000000);
+    motorForward(200,200);
+    SysCtlDelay(5000000);
 
-    motorBackward(500, 500);
-    SysCtlDelay(10000000);
+    while(1){
+/*
+        motorCorrection();
+        SysCtlDelay(500);
 
-    motorStop();
-    SysCtlDelay(10000000);
+        motorRect(50, 20);
+*/
+        motorAvoidLeftBump();
+        motorAvoidRightBump();
+    }
 
-    while(1){}
 }
