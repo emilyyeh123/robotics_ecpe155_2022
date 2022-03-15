@@ -27,6 +27,11 @@
 
 
 
+bool rightBumperTriggered = false;
+bool leftBumperTriggered = false;
+
+
+
 void initBumpSensorInterrupt(){
     // set up PC6 & PC7 for left wheel bumper
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
@@ -57,19 +62,47 @@ void bumpSensorInterruptHandler(){
     // clear interrupt
     GPIOIntClear(GPIO_PORTC_BASE, (GPIO_PIN_6 | GPIO_PIN_7));
 
-    // Left Bumper
+    // Right Bumper
     if(GPIOPinRead(GPIO_PORTC_BASE, GPIO_PIN_6) == GPIO_PIN_6){
         // turn on LED
         displayRedLED();
+        rightBumperTriggered = true;
         motorStop();
-        //motorAvoidLeftBump();
     }
 
-    // Right Bumper
+    // Left Bumper
     if(GPIOPinRead(GPIO_PORTC_BASE, GPIO_PIN_7) == GPIO_PIN_7){
         // turn on LED
         displayGreenLED();
+        leftBumperTriggered = true;
         motorStop();
     }
+}
+
+
+bool getRightBumperTriggered(){
+    return rightBumperTriggered;
+}
+
+bool getLeftBumperTriggered(){
+    return leftBumperTriggered;
+}
+
+void clearBumpTriggers(){
+    rightBumperTriggered = false;
+    leftBumperTriggered = false;
+}
+
+void bumpTriggered(){
+    // When right bumper is hit, perform motorAvoidLeftBump
+    if(getRightBumperTriggered() == true){
+        motorAvoidLeftBump();
+    }
+
+    if(getLeftBumperTriggered() == true){
+        motorAvoidRightBump();
+    }
+
+    clearBumpTriggers();
 }
 

@@ -310,5 +310,5 @@ void motorAvoidRightBump(){
 
     // stop motion
     motorStop();
-    SysCtlDelay(100000000);
+    SysCtlDelay(500000);
 }

@@ -32,19 +32,31 @@
 
 int main(){
     initBumpSensorInterrupt();
-    //initQEInterrupt();
+    initQEInterrupt();
     initLED();
     clearLED();
     initMotor(800);
 
     while(1){
-        motorForward(300, 300);
+        motorCorrection();
+
+        motorForward(200, 200);
         SysCtlDelay(10000000);
         clearLED();
 
-        motorBackward(500, 500);
+        motorCorrection();
+
+        bumpTriggered();
+
+        motorCorrection();
+
+        motorBackward(200, 200);
         SysCtlDelay(10000000);
         clearLED();
+
+        motorCorrection();
+
+        bumpTriggered();
 
         motorStop();
         SysCtlDelay(10000000/2);
