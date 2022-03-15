@@ -30,8 +30,7 @@ uint16_t revCountRight;
 
 void initQEInterrupt(){
     // initialize count variables
-    revCountLeft = 0;
-    revCountRight = 0;
+    clearCount();
 
     // Using PA3 and PA4 for QEA and QEB on left wheel
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
@@ -47,18 +46,13 @@ void initQEInterrupt(){
     // checking for both edges, so 64 ticks is one revolution
     GPIOIntTypeSet(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_2), GPIO_BOTH_EDGES);
 
-    // Enable GPIOF for LED control
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-    while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOF)) {}
-    // Set the output pins that control the LED: PF1 - red, PF2 - blue, PF3 - green
-    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2);
-
     // Enable the Interrupts
     GPIOIntEnable(GPIO_PORTA_BASE, GPIO_PIN_3 | GPIO_PIN_4);
 }
 
 void QEInterruptHandler(){
-
+    // clear interrupt
+    GPIOIntClear(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4));
 
     // LEFT WHEEL - if QEA signal is high
     if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3) == GPIO_PIN_3){
@@ -69,12 +63,11 @@ void QEInterruptHandler(){
 
     // RIGHT WHEEL - if QEA signal is high
     if(GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2) == GPIO_PIN_2){
-
         // increment Right count variable
         revCountRight++;
     }
 
-
+/*
     // When the robot has traveled about 40 cm turn right
     if((revCountLeft >= 150) && (revCountRight >= 150)) {
         //motorLeftTurn90();
@@ -84,10 +77,7 @@ void QEInterruptHandler(){
         revCountLeft = 0;
         revCountRight = 0;
     }
-
-
-    // clear interrupt
-    GPIOIntClear(GPIO_PORTA_BASE, (GPIO_PIN_3 | GPIO_PIN_4));
+*/
 }
 
 uint16_t getRevCountLeft(){

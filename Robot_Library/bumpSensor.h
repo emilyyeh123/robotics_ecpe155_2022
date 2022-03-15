@@ -11,6 +11,10 @@
 
 void initBumpSensorInterrupt();
 void bumpSensorInterruptHandler();
+bool getRightBumperTriggered();
+bool getLeftBumperTriggered();
+void clearBumpTriggers();
+void bumpTriggered();
 
 
 #endif /* BUMPSENSOR_H_ */
