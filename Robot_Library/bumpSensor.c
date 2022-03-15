@@ -97,9 +97,7 @@ void bumpTriggered(){
     // When right bumper is hit, perform motorAvoidLeftBump
     if(getRightBumperTriggered() == true){
         motorAvoidLeftBump();
-    }
-
-    if(getLeftBumperTriggered() == true){
+    }else if(getLeftBumperTriggered() == true){
         motorAvoidRightBump();
     }
 

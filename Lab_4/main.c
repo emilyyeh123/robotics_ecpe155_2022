@@ -38,28 +38,22 @@ int main(){
     initMotor(800);
 
     while(1){
-        motorCorrection();
-
         motorForward(200, 200);
         SysCtlDelay(10000000);
         clearLED();
 
-        motorCorrection();
-
         bumpTriggered();
-
-        motorCorrection();
 
         motorBackward(200, 200);
         SysCtlDelay(10000000);
         clearLED();
 
-        motorCorrection();
-
         bumpTriggered();
 
         motorStop();
         SysCtlDelay(10000000/2);
+
+        bumpTriggered();
     }
 }
 

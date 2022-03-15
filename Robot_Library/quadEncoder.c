@@ -30,8 +30,7 @@ uint16_t revCountRight;
 
 void initQEInterrupt(){
     // initialize count variables
-    revCountLeft = 0;
-    revCountRight = 0;
+    clearCount();
 
     // Using PA3 and PA4 for QEA and QEB on left wheel
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
@@ -68,6 +67,7 @@ void QEInterruptHandler(){
         revCountRight++;
     }
 
+/*
     // When the robot has traveled about 40 cm turn right
     if((revCountLeft >= 150) && (revCountRight >= 150)) {
         //motorLeftTurn90();
@@ -77,6 +77,7 @@ void QEInterruptHandler(){
         revCountLeft = 0;
         revCountRight = 0;
     }
+*/
 }
 
 uint16_t getRevCountLeft(){
