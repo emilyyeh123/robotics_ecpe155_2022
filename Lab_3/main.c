@@ -36,14 +36,15 @@ int main(){
     SysCtlDelay(5000000);
 
     while(1){
-/*
+
         motorCorrection();
         SysCtlDelay(500);
 
         motorRect(50, 20);
-*/
+/*
         motorAvoidLeftBump();
         motorAvoidRightBump();
+*/
     }
 
 }

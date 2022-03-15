@@ -31,22 +31,23 @@
 
 
 int main(){
-    initQEInterrupt();
     initBumpSensorInterrupt();
+    //initQEInterrupt();
     initLED();
+    clearLED();
     initMotor(800);
 
-    motorForward(300, 300);
-    SysCtlDelay(10000000);
-    clearLED();
+    while(1){
+        motorForward(300, 300);
+        SysCtlDelay(10000000);
+        clearLED();
 
-    motorBackward(500, 500);
-    SysCtlDelay(10000000);
-    clearLED();
+        motorBackward(500, 500);
+        SysCtlDelay(10000000);
+        clearLED();
 
-    motorStop();
-    SysCtlDelay(10000000);
-
-    while(1){}
+        motorStop();
+        SysCtlDelay(10000000/2);
+    }
 }
 
