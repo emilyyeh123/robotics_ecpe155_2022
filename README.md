@@ -4,6 +4,28 @@ This is the shared repository for team Bishop (named after a character from the 
 ## Lab 3
 In lab 3, we created a [pin planner](pin_planner.xlsx) to keep track of the pins we are using on the microcontroller.
 
+We also created several new functions that use QE signals to drive robot motion.
+  - These functions are included in the Robot_Library under [Motor_Control.h](Robot_Library/Motor_Control.h) and               [Motor_Control.c](Robot_Library/Motor_Control.c). It includes the following functions:
+    - `void motorRightTurn90() and void motorLeftTurn90`
+      - Resets the global count variables
+      -  Sets the pins that control wheel motion such that the right wheel moves forward and the left wheel moves backward
+      -  Counts the ticks to about a 90 degree rotation from current orientation
+      -  Resets the counter to zero and returns to main.c
+      
+    - `void motorRightTurn45() and void motorLeftTurn45`
+      - This function does the same thing as motorTurn90() but turns the robot about 45 degrees from current orientation. 
+
+    - `void motorCorrection()`
+      - monitors the tick counters between the wheels
+      - If one of the wheels reaches 5 or more ticks that the other wheel
+        - Increase the speed of the slower wheel
+
+    - `void motorRect(uint16_t x, uint16_t y)`
+      - User gives the length of the rectangle sides
+      - A Side Counter local variable is set to zero
+      - The robot then navigates a rectangle based on the given distances
+      - Once the robot has navigated 4 sides, the robot will terminate motion
+
 ## Lab 2
 In Lab 2, we created the Robot_Library peripheral. This library contains:
 - [PWM.h](Robot_Library/PWM.h) and [PWM.c](Robot_Library/PWM.c) which includes the following functions:
