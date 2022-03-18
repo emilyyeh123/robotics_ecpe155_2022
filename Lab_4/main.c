@@ -37,13 +37,15 @@ int main(){
     clearLED();
     initMotor(800);
 
+
     while(1){
-        motorForward(200, 200);
-        SysCtlDelay(10000000);
+        motorForward(150, 150);
         clearLED();
+        SysCtlDelay(1000000);
+
 
         bumpTriggered();
-
+/*
         motorBackward(200, 200);
         SysCtlDelay(10000000);
         clearLED();
@@ -54,6 +56,7 @@ int main(){
         SysCtlDelay(10000000/2);
 
         bumpTriggered();
+*/
     }
 }
 
