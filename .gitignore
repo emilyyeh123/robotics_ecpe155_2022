@@ -13,3 +13,8 @@ Debug/
 
 */.gitignore
 */Debug
+
+*/.*
+*/targetConfigs/
+*/tm4c123*
+
