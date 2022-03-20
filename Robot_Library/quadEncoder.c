@@ -71,7 +71,6 @@ void QEInterruptHandler(){
     // When the robot has traveled about 40 cm turn right
     if((revCountLeft >= 150) && (revCountRight >= 150)) {
         //motorLeftTurn90();
-
         motorStop();
         // Reset the counters
         revCountLeft = 0;

@@ -68,9 +68,6 @@ void bumpSensorInterruptHandler(){
         displayRedLED();
         rightBumperTriggered = true;
         motorStop();
-        SysCtlDelay(50000);
-
-
     }
 
     // Left Bumper
@@ -79,9 +76,6 @@ void bumpSensorInterruptHandler(){
         displayGreenLED();
         leftBumperTriggered = true;
         motorStop();
-        SysCtlDelay(50000);
-
-
     }
 }
 
@@ -109,4 +103,3 @@ void bumpTriggered(){
 
     clearBumpTriggers();
 }
-

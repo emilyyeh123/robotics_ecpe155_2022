@@ -22,12 +22,6 @@
 #include "driverlib/pin_map.h"
 #include "driverlib/adc.h"
 
-#include "Motor_Control.h"
-#include "PWM.h"
-#include "quadEncoder.h"
-#include "bumpSensor.h"
-#include "IR_Sensor.h"
-
 
 // Set up PDO, PD1, PD2 for the ADC according to the Tiva Data Sheet
 // AIN 7, 6, 5
@@ -60,10 +54,6 @@ void initIRSensor(){
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_ADC0)){}
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOD)){}
-
-
-    //GPIO_PORTD[GPIO_AFSEL] = GPIO_PIN_0;
-    //ADC0[ADCSSMUX0] |= 7;
 
     GPIOPinTypeADC(GPIO_PORTD_BASE, (GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2));
 
@@ -113,5 +103,4 @@ uint32_t getSensorData2(){
     ADCSequenceDataGet(ADC0_BASE, 2, &dist2);
     return dist2;
 }
-
 
