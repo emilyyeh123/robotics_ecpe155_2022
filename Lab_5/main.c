@@ -33,12 +33,49 @@
 
 
 int main(){
+    initMotor(800);
     initIRSensor();
 
+    uint32_t sensor0 = 0;
+    uint32_t sensor1 = 0;
+    uint32_t sensor2 = 0;
+
+    // use to change desired distance of avoidance
+    uint16_t sensorDistAvoid = 2500;
+
+    motorForward(200,200);
+
     while(1){
-        uint32_t sensor0 = getSensorData0();
-        uint32_t sensor1 = getSensorData1();
-        uint32_t sensor2 = getSensorData2();
+/*
+        // left sensor
+        if(sensor0 >= sensorDistAvoid){
+            motorBackward(300, 200);
+            SysCtlDelay(10000000/2);
+            motorStop();
+        }
+
+        // right sensor
+        if(sensor1 >= sensorDistAvoid){
+            motorBackward(200, 300);
+            SysCtlDelay(10000000/2);
+            motorStop();
+        }
+
+        // back sensor
+        if(sensor2 >= sensorDistAvoid){
+            motorForward(400, 400);
+            SysCtlDelay(10000000/2);
+            motorStop();
+        }
+*/
+
+        //update sensor values
+        sensor0 = getSensorData0();
+        sensor1 = getSensorData1();
+        sensor2 = getSensorData2();
+
+        motorForward(200,200);
+        SysCtlDelay(10000000/2);
     }
 }
 
