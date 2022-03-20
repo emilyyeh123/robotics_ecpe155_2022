@@ -11,6 +11,7 @@
 void initIRSensor();
 void IRHandler();
 
+extern uint32_t dist1();
 
 
 #endif /* IR_SENSOR_H_ */

@@ -27,6 +27,8 @@
 #include "Motor_Control.h"
 #include "PWM.h"
 #include "quadEncoder.h"
+#include "bumpSensor.h"
+#include "IR_Sensor.h"
 
 uint32_t dist1;
 
@@ -41,8 +43,8 @@ void initIRSensor(){
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOD)){}
 
-    GPIO_PORTD[GPIO_AFSEL] = PIN_3;
-    ADC0[ADCSSMUX0] |= 4;
+    //GPIO_PORTD[GPIO_AFSEL] = GPIO_PIN_0;
+    //ADC0[ADCSSMUX0] |= 7;
 
 
     // Register an interrupt handler for the ADC Interrupt

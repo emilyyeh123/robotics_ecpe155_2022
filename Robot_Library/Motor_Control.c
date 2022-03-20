@@ -216,7 +216,8 @@ void motorBackAvoid()
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
 
     while(1){
-        if((revCountRight >= 40) || (revCountLeft >= 40)){
+
+        if((revCountRight >= 20) || (revCountLeft >= 20)){
             revCountRight = 0;
             revCountLeft = 0;
 
@@ -258,7 +259,7 @@ void motorRightTurn45(){
     revCountLeft = 0;
     // The Period must be set to 800 for this function to work correctly
     // set pulse width
-    setPW(210, 200);
+    setPW(200, 200);
 
     // based on the HUB-ee control sheet,
     // Forward in1: High, Forward in2: Low
@@ -285,16 +286,17 @@ void motorAvoidLeftBump(){
     clearCount();
     // back up
     motorBackAvoid();
-    SysCtlDelay(50000);
-    clearCount();
+   // SysCtlDelay(50000);
+
+    motorStop();
 
     // turn left
     motorLeftTurn45();
-    SysCtlDelay(500000);
+    //SysCtlDelay(500000);
 
     // Stop motion
-    motorStop();
-    SysCtlDelay(500000);
+   // motorStop();
+   // SysCtlDelay(500000);
 }
 
 // When robot s bumped on the left, back up and turn right
@@ -302,13 +304,15 @@ void motorAvoidRightBump(){
     clearCount();
     //back up
     motorBackAvoid();
-    SysCtlDelay(50000);
-    clearCount();
+   // SysCtlDelay(50000);
+
+    motorStop();
+
     // turn right
     motorRightTurn45();
-    SysCtlDelay(500000);
+    //SysCtlDelay(500000);
 
     // stop motion
-    motorStop();
-    SysCtlDelay(500000);
+   // motorStop();
+   // SysCtlDelay(500000);
 }
