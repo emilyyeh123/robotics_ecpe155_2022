@@ -89,17 +89,21 @@ void initIRSensor(){
 uint32_t getSensorData0(){
     ADCProcessorTrigger(ADC0_BASE, 0);
     ADCSequenceDataGet(ADC0_BASE, 0, &dist0);
+    // repeat dataGet to update value instantly
+    ADCSequenceDataGet(ADC0_BASE, 0, &dist0);
     return dist0;
 }
 
 uint32_t getSensorData1(){
     ADCProcessorTrigger(ADC0_BASE, 1);
     ADCSequenceDataGet(ADC0_BASE, 1, &dist1);
+    ADCSequenceDataGet(ADC0_BASE, 1, &dist1);
     return dist1;
 }
 
 uint32_t getSensorData2(){
     ADCProcessorTrigger(ADC0_BASE, 2);
+    ADCSequenceDataGet(ADC0_BASE, 2, &dist2);
     ADCSequenceDataGet(ADC0_BASE, 2, &dist2);
     return dist2;
 }
