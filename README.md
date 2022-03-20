@@ -1,6 +1,37 @@
 # bishop_ecpe155_2022
 This is the shared repository for team Bishop (named after a character from the movie Aliens) for the Spring 2022 ECPE 155 Robotics Class. The team includes Emily Yeh and Uri Grunder.
 
+## Lab 4
+In Lab 4, we designed, printed and attached a bumper to the robot. Bump switches were used to signal the robot to take specified actions when a bumper was depressed.
+The part and assembly drawings are included as PDF's in the Lab_4 Folder.
+  - The bumper switches were secured to the bumper using an double sided adhesive that was included in the course materials. The wires run through the rear of the bumper and wind through the robot chasis to a breakout board.
+
+We also created several new functions that will control the robot's reactions to collisions with an object.  
+  - These functions are included in the Robot_Library under [Motor_Control.h](Robot_Library/Motor_Control.h) and [Motor_Control.c] (Robot_Library/Motor_Control.c). It     includes the following functions:
+      -  `void motorAvoidLeftBump() and motorAvoidRightBump()`
+        - Clear the global count variables
+        - Move backwards a specified distance
+        - If the left bumper is active, rotate 45 degrees to the right. If the right bumper is active, rotate 45 degrees left
+        - Return to main.c  
+
+Additionally, a new source and header file has been created to control the bump sensors. 
+  - These functions are included in the Robot_Library under [BumpSensor.h](Robot_library/BumpSensor.h) and [BumpSensor.c](Robot_Library/BumpSensor.c). It includes the following functions:
+    - `void initBumpSensorInterrupt()`
+      - initialized bump sensor interrupt to monitor the signals from the right and left bump switch
+      - The left Bump Switch is set to PC6 and the right Bump Switch is set to PC7
+
+    - `bool bumpSensorInterruptHandler()`
+      - When either of the bump sensors are triggered, light up an LED
+
+    - `bool getRightBumperTriggered() and getLeftBumperTriggered()`
+      - Read and return the value of the global variables right and left bumer triggered
+
+    - `void clearBumpTriggers()`
+      - Set all values of the bumpers to false 
+
+    - `void bumpTriggered()`
+      - If one of the bumpers are activated, call functions from Motor_Control.c to navigate away from the object
+
 ## Lab 3
 In lab 3, we created a [pin planner](pin_planner.xlsx) to keep track of the pins we are using on the microcontroller.
 
