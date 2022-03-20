@@ -46,7 +46,6 @@ int main(){
     motorForward(200,200);
 
     while(1){
-/*
         // left sensor
         if(sensor0 >= sensorDistAvoid){
             motorBackward(300, 200);
@@ -67,7 +66,6 @@ int main(){
             SysCtlDelay(10000000/2);
             motorStop();
         }
-*/
 
         //update sensor values
         sensor0 = getSensorData0();
@@ -75,7 +73,6 @@ int main(){
         sensor2 = getSensorData2();
 
         motorForward(200,200);
-        SysCtlDelay(10000000/2);
     }
 }
 
