@@ -1,0 +1,15 @@
+/.metadata/
+
+*.obj
+
+.jxbrowser-data/
+.metadata/
+dvt/
+TivaWare/
+RemoteSystemsTempFiles
+Debug/
+
+~$pin_planner.xlsx
+
+*/.gitignore
+*/Debug
