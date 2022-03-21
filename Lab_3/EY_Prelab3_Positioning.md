@@ -11,7 +11,37 @@
 
 In [interrupt.c](Robot_Library/interrupt.c), we created a QE interrupt handler to count each tick recieved by one signal (QEA) on both rising & falling edges.
 
+- Interrupt psuedocode:
+  ```
+  // Using PA3 and PA4 for QEA and QEB on left wheel
+  SysCtlPeripheralEnable(gpioPort);
+  while(!SysCtlPeripheralReady(gpioPort)){}
 
+  // Register the port-level interrupt handler. This handler is the first level interrupt handler for all the pin interrupts
+  GPIOIntRegister(portBase, QEInterruptHandler);
+
+  // Set Input pins to read encoder data
+  GPIOPinTypeGPIOInput(portBase, Pins);
+
+  // Set pins for input signal from encoder
+  // checking for both edges, so 64 ticks is one revolution
+  GPIOIntTypeSet(portBase, pins, GPIO_BOTH_EDGES);
+
+  // Enable the Interrupts
+  GPIOIntEnable(portBase, pins);
+  ```
+
+- Interrupt handler psuedocode:
+  ```
+  //clear interrupt
+  GPIOIntClear(portBase, pins);
+  
+  increment left count if left wheel recieves signal
+  if(GPIOPinRead(portBase, leftPin) == leftPin){}
+  
+  increment right count if right wheel recieves signal
+  if(GPIOPinRead(portBase, rightPin) == rightPin){}
+  ```
 
 ## Measuring Distance
 - The number of ticks in one revolution is 64 with both edges, one signal
