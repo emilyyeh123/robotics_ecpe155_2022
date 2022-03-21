@@ -33,8 +33,12 @@
 
 
 int main(){
-    initMotor(800);
     initIRSensor();
+    initBumpSensorInterrupt();
+    initQEInterrupt();
+    initLED();
+    clearLED();
+    initMotor(800);
 
     uint32_t sensor0 = 0;
     uint32_t sensor1 = 0;
@@ -48,17 +52,23 @@ int main(){
     while(1){
         // left sensor
         if(sensor0 >= sensorDistAvoid){
+            motorBackward(200, 300);
+            SysCtlDelay(10000000/2);
+            motorStop();
+        }
+
+        bumpTriggered();
+        clearLED();
+
+        // right sensor
+        if(sensor1 >= sensorDistAvoid){
             motorBackward(300, 200);
             SysCtlDelay(10000000/2);
             motorStop();
         }
 
-        // right sensor
-        if(sensor1 >= sensorDistAvoid){
-            motorBackward(200, 300);
-            SysCtlDelay(10000000/2);
-            motorStop();
-        }
+        bumpTriggered();
+        clearLED();
 
         // back sensor
         if(sensor2 >= sensorDistAvoid){
@@ -66,6 +76,9 @@ int main(){
             SysCtlDelay(10000000/2);
             motorStop();
         }
+
+        bumpTriggered();
+        clearLED();
 
         //update sensor values
         sensor0 = getSensorData0();
