@@ -3,11 +3,11 @@ This is the shared repository for team Bishop (named after a character from the 
 
 ## Lab 4
 In Lab 4, we designed, printed and attached a bumper to the robot. Bump switches were used to signal the robot to take specified actions when a bumper was depressed.
-The part and assembly drawings are included as PDF's in the Lab_4 Folder.
+The part and assembly drawings are included as PDF's in the Lab_4 Folder: [Bumper Assembly Drawing](Lab_4/Bumper%20Assembly%20Drawing.pdf), [Fixed Bumper Drawing](Lab_4/Fixed%20Bumper%20Drawing.pdf), [Mobile Bumper Drawing](Lab_4/Mobile%20Bumper%20Drawing.pdf).
   - The bumper switches were secured to the bumper using an double sided adhesive that was included in the course materials. The wires run through the rear of the bumper and wind through the robot chasis to a breakout board.
 
 We also created several new functions that will control the robot's reactions to collisions with an object.  
-  - These functions are included in the Robot_Library under [Motor_Control.h](Robot_Library/Motor_Control.h) and [Motor_Control.c] (Robot_Library/Motor_Control.c). It     includes the following functions:
+  - These functions are included in the Robot_Library under [Motor_Control.h](Robot_Library/Motor_Control.h) and [Motor_Control.c](Robot_Library/Motor_Control.c). It     includes the following functions:
       -  `void motorAvoidLeftBump() and motorAvoidRightBump()`
         - Clear the global count variables
         - Move backwards a specified distance
