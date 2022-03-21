@@ -8,19 +8,21 @@ In the Lab_5 folder, there are two drawings that show how these sensors were con
 
 To successfully use the IR sensors, new functions were created. These functions are included in the Robot_Library under [IR_Sensor.h](Robot_Library/IR_Sensor.h) and [IR_Sensor.c](Robot_Library/IR_Sensor.c). They are described as follows:
   - `getSensorData0()`
-    - retrive voltage signal coming from the IR Sensor
+    - retrieve voltage signal coming from the IR Sensor
     - Store the signal data in a variable called "dist0"
-    - 
+
   - `getSensorData1()`
-    - retrive voltage signal coming from the IR Sensor
+    - retrieve voltage signal coming from the IR Sensor
     - Store the signal data in a variable called "dist1"
 
   - `getSensorData2()`
-    - retrive voltage signal coming from the IR Sensor
+    - retrieve voltage signal coming from the IR Sensor
     - Store the signal data in a variable called "dist2"
 
-As shown above, three new variables were declared to store IR signal data.
-`dist0, dist1, and dist2`
+As shown above, three new variables (`dist0`, `dist1`, and `dist2`) were declared to store IR signal data.
+The [Sensor Verification](Lab_5/sensorVerification.md) file describes how these functions were tested,
+showing that the IR sensors work independent of all other robot features.
+
 Additionally, Emily did amazing work in configuring the GPIO pins to the ADC alternate function.
 
 
