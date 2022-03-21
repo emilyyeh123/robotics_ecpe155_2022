@@ -23,8 +23,8 @@
 #include "driverlib/adc.h"
 
 
-// Set up PDO, PD1, PD2 for the ADC according to the Tiva Data Sheet
-// AIN 7, 6, 5
+// Set up PDO, PD3, PD2 for the ADC according to the Tiva Data Sheet
+// AIN 7, 4, 5
 
 // Peripheral base addresses.
 #define GPIO_PORTD              ((volatile uint32_t *)0x40007000)
@@ -33,7 +33,7 @@
 // Peripheral register offsets and special fields
 enum {
 #define   PIN_0              (1 << 0)      // pin 0
-#define   PIN_1              (1 << 1)      // pin 1
+#define   PIN_3              (1 << 3)      // pin 3
 #define   PIN_2              (1 << 2)      // pin 2
   GPIO_AFSEL  =   (0x420 >> 2),
   ADCSSMUX0   =   (0x040 >> 2),
@@ -55,14 +55,14 @@ void initIRSensor(){
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     while(!SysCtlPeripheralReady(SYSCTL_PERIPH_GPIOD)){}
 
-    GPIOPinTypeADC(GPIO_PORTD_BASE, (GPIO_PIN_0 | GPIO_PIN_1 | GPIO_PIN_2));
+    GPIOPinTypeADC(GPIO_PORTD_BASE, (GPIO_PIN_0 | GPIO_PIN_3 | GPIO_PIN_2));
 
     // enable alternate function
-    GPIO_PORTD[GPIO_AFSEL] = (PIN_0 | PIN_1 | PIN_2);
+    GPIO_PORTD[GPIO_AFSEL] = (PIN_0 | PIN_3 | PIN_2);
     // Set the pins for each mux
     // bc each mux is 4 bits, shift by 4 for each extra mux
     ADC0[ADCSSMUX0] |= (7 << 0);
-    ADC0[ADCSSMUX0] |= (6 << 4);
+    ADC0[ADCSSMUX0] |= (4 << 4);
     ADC0[ADCSSMUX0] |= (5 << 8);
 
     // each pin requires a separate sequence number
@@ -77,7 +77,7 @@ void initIRSensor(){
 
     // Configure a step of the sample sequencer.
     ADCSequenceStepConfigure(ADC0_BASE, 0, 0, ADC_CTL_CH7 | ADC_CTL_END);
-    ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_CH6 | ADC_CTL_END);
+    ADCSequenceStepConfigure(ADC0_BASE, 1, 0, ADC_CTL_CH4 | ADC_CTL_END);
     ADCSequenceStepConfigure(ADC0_BASE, 2, 0, ADC_CTL_CH5 | ADC_CTL_END);
 
     // Enable sample sequence
@@ -88,18 +88,21 @@ void initIRSensor(){
 
 uint32_t getSensorData0(){
     ADCProcessorTrigger(ADC0_BASE, 0);
+    SysCtlDelay(10000000/64);
     ADCSequenceDataGet(ADC0_BASE, 0, &dist0);
     return dist0;
 }
 
 uint32_t getSensorData1(){
     ADCProcessorTrigger(ADC0_BASE, 1);
+    SysCtlDelay(10000000/64);
     ADCSequenceDataGet(ADC0_BASE, 1, &dist1);
     return dist1;
 }
 
 uint32_t getSensorData2(){
     ADCProcessorTrigger(ADC0_BASE, 2);
+    SysCtlDelay(10000000/64);
     ADCSequenceDataGet(ADC0_BASE, 2, &dist2);
     return dist2;
 }

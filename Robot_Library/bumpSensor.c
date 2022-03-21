@@ -67,7 +67,6 @@ void bumpSensorInterruptHandler(){
         // turn on LED
         displayRedLED();
         rightBumperTriggered = true;
-        motorStop();
     }
 
     // Left Bumper
@@ -75,7 +74,6 @@ void bumpSensorInterruptHandler(){
         // turn on LED
         displayGreenLED();
         leftBumperTriggered = true;
-        motorStop();
     }
 }
 
@@ -96,10 +94,10 @@ void clearBumpTriggers(){
 void bumpTriggered(){
     // When right bumper is hit, perform motorAvoidLeftBump
     if(getRightBumperTriggered() == true){
+        clearBumpTriggers();
         motorAvoidLeftBump();
     }else if(getLeftBumperTriggered() == true){
+        clearBumpTriggers();
         motorAvoidRightBump();
     }
-
-    clearBumpTriggers();
 }

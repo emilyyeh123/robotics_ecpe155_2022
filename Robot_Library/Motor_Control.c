@@ -203,26 +203,9 @@ void motorStop(){
 
 void motorBackAvoid()
 {
-    // set pulse width
-    setPW(200, 200);
-
-    // based on the HUB-ee control sheet,
-    // Forward in1: High, Forward in2: Low
-    // left wheel does the opposite (bc wheel placement mirrored)
-    // - high pins: PE2 & PE4
-    // - low pins: PE1 & PE5
-    GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_4), (GPIO_PIN_2 | GPIO_PIN_4));
-    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
-    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
-
-    while(1){
-        if((revCountRight >= 40) || (revCountLeft >= 40)){
-            revCountRight = 0;
-            revCountLeft = 0;
-
-            return;
-        }
-    }
+    motorBackward(200,200);
+    while((revCountRight <= 40) && (revCountLeft <= 40)){}
+    clearCount();
 }
 
 // Turn the robot 45 degrees to the left
@@ -286,7 +269,6 @@ void motorAvoidLeftBump(){
     // back up
     motorBackAvoid();
     SysCtlDelay(50000);
-    clearCount();
 
     // turn left
     motorLeftTurn45();
@@ -297,13 +279,13 @@ void motorAvoidLeftBump(){
     SysCtlDelay(500000);
 }
 
-// When robot s bumped on the left, back up and turn right
+// When robot is bumped on the left, back up and turn right
 void motorAvoidRightBump(){
     clearCount();
     //back up
     motorBackAvoid();
     SysCtlDelay(50000);
-    clearCount();
+
     // turn right
     motorRightTurn45();
     SysCtlDelay(500000);

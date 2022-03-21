@@ -39,7 +39,7 @@ int main(){
 
 
     while(1){
-        motorForward(150, 150);
+        motorForward(200, 200);
         clearLED();
         SysCtlDelay(1000000);
 
