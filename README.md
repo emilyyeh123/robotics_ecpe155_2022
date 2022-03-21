@@ -58,7 +58,9 @@ We also created several new functions that use QE signals to drive robot motion.
       - Once the robot has navigated 4 sides, the robot will terminate motion
 
 ## Lab 2
-In Lab 2, we created the Robot_Library peripheral. This library contains:
+[main.c](Lab_2/main.c) in [Lab_2](Lab_2) uses the aforementioned files to initialize the motor and move the system. It's currently set up to move forward slowly, backward quickly, then stop.
+
+In Lab 2, we created the [Robot_Library](Robot_Library) peripheral. This library contains:
 - [PWM.h](Robot_Library/PWM.h) and [PWM.c](Robot_Library/PWM.c) which includes the following functions:
   - `void initPWM(uint16_t period)`
     - Initializes the PWM for both wheels 
@@ -83,8 +85,6 @@ In Lab 2, we created the Robot_Library peripheral. This library contains:
     - Therefore, PE1 and PE5 are set to low while PE2 and PE4 are set to high 
   - `void motorStop()`
     - set all pins (IN1 and IN2) high
-
-[main.c](Lab_2/main.c) in [Lab_2](Lab_2) uses the aforementioned files to initialize the motor and move the system. It's currently set up to move forward slowly, backward quickly, then stop.
 
 ## Lab 1
 Lab 1 was completed separately by both members. [Uris_Lab1](Uris_Lab1) contains Uri's code for lab 1 and [emily_lab1](emily_lab1) contains Emily's code for lab 1.
