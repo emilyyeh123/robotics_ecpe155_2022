@@ -1,6 +1,31 @@
 # bishop_ecpe155_2022
 This is the shared repository for team Bishop (named after a character from the movie Aliens) for the Spring 2022 ECPE 155 Robotics Class. The team includes Emily Yeh and Uri Grunder.
 
+## Lab 5
+In Lab 5 we attached three Infrared (IR) Sensors to the robot chasis and created a program that used those sensors to avoid objects that approach the robot sides and rear. 
+
+In the Lab_5 folder, there are two drawings that show how these sensors were connected to the robot and the general computational flow of the program which uses these sensors and the bumper. These documents can be found in the Lab_5 Folder: [Block Diagram of Obstacle Avoidance](Lab_5/Block%20Diagram%20of%20Obstacle%20Avoidance.pdf) and [Sensing System Design](Lab_5/Sensing%20System%20Design.pdf).
+
+To successfully use the IR sensors, new functions were created. These functions are included in the Robot_Library under [IR_Sensor.h](Robot_Library/IR_Sensor.h) and [IR_Sensor.c](Robot_Library/IR_Sensor.c). They are described as follows:
+  - `getSensorData0()`
+    - retrieve voltage signal coming from the IR Sensor
+    - Store the signal data in a variable called "dist0"
+
+  - `getSensorData1()`
+    - retrieve voltage signal coming from the IR Sensor
+    - Store the signal data in a variable called "dist1"
+
+  - `getSensorData2()`
+    - retrieve voltage signal coming from the IR Sensor
+    - Store the signal data in a variable called "dist2"
+
+As shown above, three new variables (`dist0`, `dist1`, and `dist2`) were declared to store IR signal data.
+The [Sensor Verification](Lab_5/sensorVerification.md) file describes how these functions were tested,
+showing that the IR sensors work independent of all other robot features.
+
+Additionally, Emily did amazing work in configuring the GPIO pins to the ADC alternate function.
+
+
 ## Lab 4
 In Lab 4, we designed, printed and attached a bumper to the robot. Bump switches were used to signal the robot to take specified actions when a bumper was depressed.
 The part and assembly drawings are included as PDF's in the Lab_4 Folder: [Bumper Assembly Drawing](Lab_4/Bumper%20Assembly%20Drawing.pdf), [Fixed Bumper Drawing](Lab_4/Fixed%20Bumper%20Drawing.pdf), [Mobile Bumper Drawing](Lab_4/Mobile%20Bumper%20Drawing.pdf).
