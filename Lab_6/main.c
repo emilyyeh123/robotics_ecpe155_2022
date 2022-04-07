@@ -28,14 +28,37 @@
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
 
+char packet_send[2] = {0xAA, 0x55};
+char packet_rec[2];
 
 int main(void)
 {
     initSerial();
+    initLED();
 
-    while(1) {
+    while(1){
 
-        UARTCharPut(UART1_BASE, 'e');
+        // Indicate ready to receive
+        displayGreenLED();
 
+        // Wait until a response is received
+        while(!UARTCharsAvail(UART1_BASE)) {}
+
+        // Store the incoming data to a specified array
+        for(int i = 0; i < sizeof(packet_rec); i++) {
+                packet_rec[i] = UARTCharGet(UART1_BASE);
+        }
+
+        clearLED();
+
+        // If the initialize flag is receive
+        if (packet_rec[0] == 0xAA) {
+            UARTCharPut(UART1_BASE, packet_send[1]);
+        }
+
+        displayBlueLED();
+        SysCtlDelay(5000000);
+        clearLED();
+
+        }
     }
-}
