@@ -11,24 +11,19 @@ def main():
     endCommand = b'\x55'
     motorForward = b'\x81' 
 
-    # send start command
+    # send start command and action
     packData = struct.pack('2c', startCommand, motorForward)
     print("transmit ", packData)
     trans = ser.write(packData)
-    rec = ser.read(1)
-    print("recieve ", rec)
-    unpackData = struct.unpack('c', rec)
-    print("unpack ", unpackData)
-    
-    if(unpackData == b'\x55'):
-        print("Data unpacked properly!")
 
-        #for i in range(2):
-            #packData = b'' 
-            #print("recieving index:", i)
-            #recieve = ser.read(1)
-            #packData += struct.pack('c', recieve)
-        #print("transmitting", packData)
+    # recieve 3 bytes of data
+    rec = ser.read(3)
+    print("recieve ", rec)
+    #unpackData = struct.unpack('c', rec)
+    #print("unpack ", unpackData)
+    
+    #if(unpackData == b'\x55'):
+        #print("Data unpacked properly!")
 
     ser.close()
 
