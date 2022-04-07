@@ -28,7 +28,7 @@
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
 
-char packet_send[2] = {0xAA, 0x55};
+char packet_send[3] = {0xAA, 0xFF, 0x55};
 char packet_rec[2];
 
 int main(void)
@@ -53,7 +53,21 @@ int main(void)
 
         // If the initialize flag is receive
         if (packet_rec[0] == 0xAA) {
-            UARTCharPut(UART1_BASE, packet_send[1]);
+
+            switch(packet_rec[1]) {
+
+            // When THIS command is received
+            case 0x81:
+                displayRedLED();
+                for(int i = 0; i < 3; i++) {
+                    UARTCharPut(UART1_BASE,packet_send[i]);
+                    clearLED();
+                    displayBlueLED();
+                    SysCtlDelay(5000000);
+                }
+                clearLED();
+                break;
+            }
         }
 
         displayBlueLED();
