@@ -1,6 +1,11 @@
 # bishop_ecpe155_2022
 This is the shared repository for team Bishop (named after a character from the movie Aliens) for the Spring 2022 ECPE 155 Robotics Class. The team includes Emily Yeh and Uri Grunder.
 
+## Lab 6
+In Lab 6 we designed a communication protocol to send and receive data between the Tiva and the Raspberry Pi.
+
+A logic analyzer was used to observe communication between the two boards. A sceenshot was included in the Lab 6 folder: [Logic Analyzer Screenshot] (Lab_6/Put%stuff%here.pdf). This shows data recieved on the Tiva from the Raspberry Pi through channel 9 and a response recieved on the Raspberry Pi from the Tiva through channel 1. 
+
 ## Lab 5
 In Lab 5 we attached three Infrared (IR) Sensors to the robot chasis and created a program that used those sensors to avoid objects that approach the robot sides and rear. 
 
