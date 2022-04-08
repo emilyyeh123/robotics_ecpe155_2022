@@ -5,6 +5,8 @@ import time
 import struct
 
 def main():
+    // need UI to choose operations
+
     ser = serial.Serial("/dev/ttyS0") # open named port
 
     startCommand = b'\xaa'
