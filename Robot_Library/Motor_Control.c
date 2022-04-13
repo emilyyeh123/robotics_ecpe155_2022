@@ -27,6 +27,9 @@
 #include "Motor_Control.h"
 #include "quadEncoder.h"
 
+double angle;
+double pose[] = {0, 0, 0};
+double final_pose[] = {0, 0, 0};
 
 // Initialize the motor
 void initMotor(uint16_t period){
@@ -45,6 +48,12 @@ void initMotor(uint16_t period){
     GPIOPinTypeGPIOOutput(GPIO_PORTA_BASE, (GPIO_PIN_6 | GPIO_PIN_7));
     // set standby to active high
     GPIOPinWrite(GPIO_PORTA_BASE, (GPIO_PIN_6 | GPIO_PIN_7), (GPIO_PIN_6 | GPIO_PIN_7));
+
+}
+
+void giveGoal(uint16_t x, uint16_t y) {
+    final_pose[0] = x;
+    final_pose[1] = y;
 }
 
 
@@ -293,4 +302,106 @@ void motorAvoidRightBump(){
     // stop motion
     motorStop();
     SysCtlDelay(500000);
+}
+
+// Takes an angle (within plus/mins 90 degrees) and turns robot to face it.
+void motorOrient(uint16_t angle){
+    revCountRight = 0;
+    revCountLeft = 0;
+    // The Period must be set to 800 for this function to work correctly
+    // set pulse width
+    setPW(200, 200);
+
+        angle = lround(angle*30/3.14);
+        pose[2] = angle;
+
+        // If the Angle is positive, robot rotates counter-clockwise
+        if(angle == abs(angle))
+        {
+            GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_5), (GPIO_PIN_2 | GPIO_PIN_5));
+            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
+            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
+
+            while(1){
+                if((revCountRight >= angle) || (revCountLeft >= angle)){
+                    revCountRight = 0;
+                    revCountLeft = 0;
+
+                    return;
+                }
+            }
+        }
+
+        // If the Angle is negative, robot rotates clockwise
+        if(angle == abs(angle))
+        {
+            angle = angle*(-1);
+            GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_4), (GPIO_PIN_1 | GPIO_PIN_4));
+            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, 0);
+            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
+
+            while(1){
+                if((revCountRight >= angle) || (revCountLeft >= angle)){
+                    revCountRight = 0;
+                    revCountLeft = 0;
+
+                    return;
+                }
+            }
+        }
+
+}
+
+
+void getAngle(uint16_t x, uint16_t y){
+    x = final_pose[0] - pose[0];
+    y = final_pose[1] - pose[1];
+
+    angle = atan(y/x);
+}
+
+
+// Move the robot to more easily rotate towards an angle
+void checkAngle(uint16_t angle){
+    if(angle > 1.57) {
+        motorLeftTurn180();
+        angle = angle - 3.14;
+    }
+
+    if(angle < 1.57) {
+        motorLeftTurn180();
+        angle = angle + 3.14;
+    }
+
+    else{
+        return;
+    }
+}
+
+// Function to turn the robot left approximately 180 degrees
+void motorLeftTurn180(){
+    revCountRight = 0;
+    revCountLeft = 0;
+    // The Period must be set to 800 for this function to work correctly
+    // set pulse width
+    setPW(200, 200);
+
+    // based on the HUB-ee control sheet,
+    // Forward in1: High, Forward in2: Low
+    // left wheel does the opposite (bc wheel placement mirrored)
+    // - low pins: PE2 & PE4
+    // - high pins: PE1 & PE5
+    GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_5), (GPIO_PIN_2 | GPIO_PIN_5));
+    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
+    GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
+
+    while(1){
+        if((revCountRight >= 30) || (revCountLeft >= 30)){
+            revCountRight = 0;
+            revCountLeft = 0;
+
+            return;
+        }
+    }
+
 }
