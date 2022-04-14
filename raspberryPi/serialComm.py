@@ -18,70 +18,49 @@ left90 = 0x86
 
 
 
-def send_request(packetArr):
+def send_request(ser, packet):
     packet.append(struct.pack('B', endCommand))
 
     # send all requests
     for i in range(len(packet)):
-        print("transmit: " packet[i])
+        print("transmit: ", packet[i])
         ser.write(packet[i])
+    packet.clear()
 
+    # check for response
     respPacket = []
-    while 1:
-        # if there is data to recieve
-        try:
-            # recieve first byte of response
+
+    while ser.in_waiting <= 0:
+        pass
+
+    # in_waiting returns number of bytes
+    # if there is data to receive
+    while ser.in_waiting < 0:
+        # receive first byte of response
+        resp = ser.read()
+        print("response is: ", resp)
+        respPacket.append(list(struct.unpack('c', resp)))
+
+        # if first response is equal to startCommand
+        if respPacket[0] == startCommand:
+            # receive command
             resp = ser.read(1)
             respPacket.append(struct.unpack('B', resp))
             print("First response: ", respPacket[0])
 
-            # if first response is equal to startCommand
-            if respPacket[0] = startCommand:
-                # recieve next response
-                resp = ser.read(1)
-                respPacket.append(struct.unpack('B', resp))
-                print("First response: ", respPacket[0])
+            #while respPacket
 
-                while respPacket
-
-        # if no data to recieve, handle exception
-        except:
-            print("no response recieved")
 
 
 
 def main():
-    #ser = serial.Serial("/dev/ttyS0") # initialize serial
-
-    '''
-    for i in range(len(packet)):
-        print("transmit ", packet[i])
-        ser.write(packet[i])
-
-    # send start command and action
-    #packData = struct.pack('2c', startCommand, motorForward)
-    #print("transmit ", packet)
-    #trans = ser.write(packData)
-
-    # recieve 3 bytes of data
-    rec = ser.read(3)
-    print("recieve ", rec)
-    #unpackData = struct.unpack('c', rec)
-    #print("unpack ", unpackData)
-    
-    #if(unpackData == b'\x55'):
-        #print("Data unpacked properly!")
-
-    ser.close()
-    '''
-
+    ser = serial.Serial("/dev/ttyS0") # initialize serial
 
     packet = []
-    packet.append(struct.pack('B', startCommand))
 
     while 1:
         # display UI
-        print("Robot Actions Menu")
+        print("\nROBOT ACTIONS MENU")
         print("0) move forwards\n"\
               "1) move backwards\n"\
               "2) turn right 45 degrees\n"\
@@ -90,20 +69,24 @@ def main():
               "5) turn left 90 degrees\n"\
               "6) exit")
 
-        # recieve user input
-        menuInp = int(input("   > "))
+        # receive user input
+        menuInp = int(input("> "))
 
         # send packet according to user input
-        match menuInp:
-            case 0:
-                # move forward
-                packet.append(struct.pack('B', motorForward))
-            case 1:
-                # move backward
-                packet.append(struct.pack('B', motorBackward))
-            case _:
-                # default
-                print("not a valid option")
+        if menuInp == 0:
+            # move forward
+            packet.append(struct.pack('B', startCommand))
+            packet.append(struct.pack('B', motorForward))
+            send_request(ser, packet)
+        elif menuInp == 1:
+            # move backward
+            packet.append(struct.pack('B', startCommand))
+            packet.append(struct.pack('B', motorBackward))
+        elif menuInp == 6:
+            return
+        else:
+            # default
+            print("not a valid option")
 
 if __name__ == "__main__":
     main()
