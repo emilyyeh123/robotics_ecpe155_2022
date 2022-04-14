@@ -18,38 +18,48 @@ left90 = 0x86
 
 
 
+def mainMenu():
+    # display UI
+    print("\nROBOT ACTIONS MENU")
+    print("0) move forwards\n"\
+          "1) move backwards\n"\
+          "2) turn right 45 degrees\n"\
+          "3) turn left 45 degrees\n"\
+          "4) turn right 90 degrees\n"\
+          "5) turn left 90 degrees\n"\
+          "6) exit")
+
+    # receive user input
+    menuInp = int(input("> "))
+    return menuInp
+
+
+
 def send_request(ser, packet):
     packet.append(struct.pack('B', endCommand))
 
     # send all requests
     for i in range(len(packet)):
-        print("transmit: ", packet[i])
         ser.write(packet[i])
+        print("transmit: ", packet[i])
     packet.clear()
 
-    # check for response
+    # store responses
     respPacket = []
+    #print("endCommand to hex ", bytes.fromhex(str(endCommand)))
 
-    while ser.in_waiting <= 0:
-        pass
-
-    # in_waiting returns number of bytes
-    # if there is data to receive
-    while ser.in_waiting < 0:
-        # receive first byte of response
+    while 1:
+        # receive first response
         resp = ser.read()
-        print("response is: ", resp)
-        respPacket.append(list(struct.unpack('c', resp)))
+        print("response: ", resp)
+        #resp = list(struct.unpack('c', resp))
 
-        # if first response is equal to startCommand
-        if respPacket[0] == startCommand:
-            # receive command
-            resp = ser.read(1)
-            respPacket.append(struct.unpack('B', resp))
-            print("First response: ", respPacket[0])
+        #if resp == b'\xaa'
+            #print("Action has begun")
 
-            #while respPacket
-
+        if resp == b'U':
+            print("Action Completed")
+            break
 
 
 
@@ -59,18 +69,7 @@ def main():
     packet = []
 
     while 1:
-        # display UI
-        print("\nROBOT ACTIONS MENU")
-        print("0) move forwards\n"\
-              "1) move backwards\n"\
-              "2) turn right 45 degrees\n"\
-              "3) turn left 45 degrees\n"\
-              "4) turn right 90 degrees\n"\
-              "5) turn left 90 degrees\n"\
-              "6) exit")
-
-        # receive user input
-        menuInp = int(input("> "))
+        menuInp = mainMenu()
 
         # send packet according to user input
         if menuInp == 0:
