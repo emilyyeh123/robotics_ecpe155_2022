@@ -406,7 +406,7 @@ void nav_xy(double x, double y){
     // ensure the robot can orient to the goal position
     checkAngle();
 
-    // Orient the robot towards the goal position
+    // determine the ticks needed to get to the goal position
     getAngle();
 
     // Rotate robot to face goal position
@@ -414,9 +414,15 @@ void nav_xy(double x, double y){
 
     motorForward(200, 200);
     initDrivetimer();
+    initBumpSensorInterrupt();
+    initIRSensor();
 
     if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
         motorStop();
         return;
     }
+    getSensorData0();
+    getSensorData1();
+    getSensorData2();
+
 }

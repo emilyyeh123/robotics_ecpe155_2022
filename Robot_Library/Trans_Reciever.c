@@ -30,8 +30,6 @@
 #include "Trans_Reciever.h"
 #include "timer.h"
 
-char packet_send[3] = {0xAA, 0, 0xFF};
-char packet_rec[3];
 
 
 void initSerial(){
