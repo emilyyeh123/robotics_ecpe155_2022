@@ -28,8 +28,8 @@
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
 
-char packet_send[3] = {0xAA, 0xFF, 0x55};
-char packet_rec[2];
+char packet_send[3];
+char packet_rec[3];
 
 int main(void)
 {

@@ -26,6 +26,7 @@
 #include "PWM.h"
 #include "Motor_Control.h"
 #include "quadEncoder.h"
+#include "timer.h"
 
 double angle;
 double pose[] = {0, 0, 0};
@@ -49,11 +50,6 @@ void initMotor(uint16_t period){
     // set standby to active high
     GPIOPinWrite(GPIO_PORTA_BASE, (GPIO_PIN_6 | GPIO_PIN_7), (GPIO_PIN_6 | GPIO_PIN_7));
 
-}
-
-void giveGoal(uint16_t x, uint16_t y) {
-    final_pose[0] = x;
-    final_pose[1] = y;
 }
 
 
@@ -305,72 +301,69 @@ void motorAvoidRightBump(){
 }
 
 // Takes an angle (within plus/mins 90 degrees) and turns robot to face it.
-void motorOrient(uint16_t angle){
+void motorOrient(){
     revCountRight = 0;
     revCountLeft = 0;
     // The Period must be set to 800 for this function to work correctly
     // set pulse width
     setPW(200, 200);
 
-        angle = lround(angle*30/3.14);
-        pose[2] = angle;
+    // Update the pose to this angle in Radians
+    pose[2] = angle;
 
-        // If the Angle is positive, robot rotates counter-clockwise
-        if(angle == abs(angle))
-        {
-            GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_5), (GPIO_PIN_2 | GPIO_PIN_5));
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
+    // Convert the angle to a number of ticks for the encoder to use
+    angle = lround(angle*30/3.14);
 
-            while(1){
-                if((revCountRight >= angle) || (revCountLeft >= angle)){
-                    revCountRight = 0;
-                    revCountLeft = 0;
+    // If the Angle is positive, robot rotates counter-clockwise
+    if(angle == abs(angle))
+    {
+        GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_5), (GPIO_PIN_2 | GPIO_PIN_5));
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
 
-                    return;
-                }
+        while(1){
+            if((revCountRight >= angle) || (revCountLeft >= angle)){
+                revCountRight = 0;
+                revCountLeft = 0;
+                return;
             }
         }
+    }
 
-        // If the Angle is negative, robot rotates clockwise
-        if(angle == abs(angle))
-        {
-            angle = angle*(-1);
-            GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_4), (GPIO_PIN_1 | GPIO_PIN_4));
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, 0);
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
+    // If the Angle is negative, robot rotates clockwise
+    if(angle < abs(angle))
+    {
+        angle = angle*(-1);
+        GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_4), (GPIO_PIN_1 | GPIO_PIN_4));
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, 0);
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
 
-            while(1){
-                if((revCountRight >= angle) || (revCountLeft >= angle)){
-                    revCountRight = 0;
-                    revCountLeft = 0;
+        while(1){
+            if((revCountRight >= angle) || (revCountLeft >= angle)){
+                revCountRight = 0;
+                revCountLeft = 0;
 
-                    return;
-                }
+                return;
             }
         }
+    }
 
 }
 
-
-void getAngle(uint16_t x, uint16_t y){
-    x = final_pose[0] - pose[0];
-    y = final_pose[1] - pose[1];
+// Determine what angle the robot should face to arrive at the goal pose (in radians)
+void getAngle(){
+    double x = final_pose[0] - pose[0];
+    double y = final_pose[1] - pose[1];
 
     angle = atan(y/x);
 }
 
 
-// Move the robot to more easily rotate towards an angle
-void checkAngle(uint16_t angle){
-    if(angle > 1.57) {
+// Move the robot 180 degrees if the goal is located behind the robot
+void checkAngle(){
+    if((final_pose[0] - pose[0]) < 0) {
         motorLeftTurn180();
-        angle = angle - 3.14;
-    }
-
-    if(angle < 1.57) {
-        motorLeftTurn180();
-        angle = angle + 3.14;
+        pose[0] = pose[0] * (-1);
     }
 
     else{
@@ -403,5 +396,27 @@ void motorLeftTurn180(){
             return;
         }
     }
+}
 
+void nav_xy(double x, double y){
+    //assign final position
+    final_pose[0] = x;
+    final_pose[1] = y;
+
+    // ensure the robot can orient to the goal position
+    checkAngle();
+
+    // Orient the robot towards the goal position
+    getAngle();
+
+    // Rotate robot to face goal position
+    motorOrient();
+
+    motorForward(200, 200);
+    initDrivetimer();
+
+    if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
+        motorStop();
+        return;
+    }
 }

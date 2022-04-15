@@ -9,8 +9,8 @@
 #define MOTOR_CONTROL_H_
 
 extern double pose[2];
-extern double pose[2];
-double angle;
+extern double final_pose[2];
+extern double angle;
 
 void initMotor(uint16_t period);
 void motorForward(uint16_t PWLeft, uint16_t PWRight);
@@ -25,8 +25,10 @@ void motorRightTurn45();
 void motorLeftTurn45();
 void motorAvoidLeftBump();
 void motorAvoidRightBump();
-void motorOrient(uint16_t angle);
+void motorOrient();
 void motorLeftTurn180();
+void getAngle();
+void checkAngle();
 
 
 #endif /* MOTOR_CONTROL_H_ */

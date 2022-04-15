@@ -9,5 +9,6 @@
 #define TRANS_RECIEVER_H_
 
 void initSerial();
-
+//void getMessage();
+//char packet_rec[10];
 #endif /* TRANS_RECIEVER_H_ */
