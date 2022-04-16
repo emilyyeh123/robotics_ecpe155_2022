@@ -30,6 +30,8 @@
 #include "Trans_Reciever.h"
 #include "timer.h"
 
+char packet_send[8];
+char packet_rec[8];
 
 
 void initSerial(){
@@ -54,10 +56,14 @@ void initSerial(){
     UARTFIFOEnable(UART1_BASE);
 }
 
-void recieveMess(){
+
+
+
+
+void recieveMess(char *packet_rec){
+
     // Indicate ready to receive
     displayGreenLED();
-
     // Wait until a response is received
     while(!UARTCharsAvail(UART1_BASE)) {}
 
@@ -69,64 +75,67 @@ void recieveMess(){
     clearLED();
 
     // If the initialize flag is receive
-    if ((packet_rec[0] == 0xAA) & (packet_rec[2] == 0xFF)) {
+    if ((packet_rec[0] == 0xAA) & (packet_rec[2] == 0x55)) {
 
+        //Commands type based on the second element
         switch(packet_rec[1]) {
 
-        // When navigation command is received
-        case 0x81:
-            displayRedLED();
+            // move forward
+            case(0x01):{
+                motorForward();
+                travelTime(packet_rec[2]);
 
-            // Ask for x variable
-            packet_send[1] = 0xBB;
-            for(int i = 0; i < 3; i++) {
-                UARTCharPut(UART1_BASE,packet_send[i]);
+                break;
             }
 
-            // Wait until a response is received
-            while(!UARTCharsAvail(UART1_BASE)) {}
+            // move backwards
+            case(0x02):{
+                motorBackward();
+                travelTime(packet_rec[2]);
 
-            // Store the incoming data to a specified array
-            for(int i = 0; i < sizeof(packet_rec); i++) {
-                    packet_rec[i] = UARTCharGet(UART1_BASE);
+                break;
             }
 
-            // Convert Response to variable x
-            double x = stod(packet_rec[1]);
+            // turn right
+            case(0x03):{
+                motorUserOrient(-90);
 
-
-            // Ask for y variable
-            packet_send[1] = 0xCC;
-            for(int i = 0; i < 3; i++) {
-                UARTCharPut(UART1_BASE,packet_send[i]);
+                break;
             }
 
-            // Wait until a response is received
-            while(!UARTCharsAvail(UART1_BASE)) {}
+            // turn left
+            case(0x04):{
+                motorUserOrient(90);
 
-            // Store the incoming data to a specified array
-            for(int i = 0; i < sizeof(packet_rec); i++) {
-                    packet_rec[i] = UARTCharGet(UART1_BASE);
+                break;
             }
 
-            // Convert Response to variable x
-            double y = stod(packet_rec[1]);
+            // When navigation command is received
+            case (0x81):{
+                displayRedLED();
 
-            clearLED();
-            displayBlueLED();
-            nav_xy(x, y);
+                // Convert Response to variable x
+                double x = stod(packet_rec[2]);
 
+                // Convert Response to variable x
+                double y = stod(packet_rec[3]);
 
-            // If robot has reached goal
-            if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
-                jobComplete();
+                clearLED();
+                displayBlueLED();
+
+                nav_xy(x, y);
+
+                // If robot has reached goal
+                if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
+                    jobComplete();
+                }
+                // Else indicate an object or error of some kind
+                else if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
+                    objectDetected(packet_send);
+                }
             }
-            // Else indicate an object or error of some kind
-            else if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
-                objectDetected();
 
         }
-    }
 
     displayBlueLED();
     SysCtlDelay(5000000);
@@ -138,7 +147,7 @@ void recieveMess(){
 
 
 
-void jobComplete(){
+void jobComplete(char *packet_send){
     motorStop();
     clearLED();
     displayGreenLED();
@@ -153,10 +162,11 @@ void jobComplete(){
 
 
 
-void objectDetected(){
+void objectDetected(char *packet_send){
     motorStop();
     clearLED();
     displayRedLED();
+
     packet_send[1] = 0xDD;
     for(int i = 0; i < 3; i++) {
         UARTCharPut(UART1_BASE,packet_send[i]);

@@ -57,9 +57,9 @@ void Timer0IntHandler(void){
     // Clear the timer interrupt
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
 
+    // Update the robot position
     pose[0] = pose[0] + (5) * cos(pose[3]) * 0.5;
     pose[1] = pose[1] + (5) * sin(pose[3]) * 0.5;
-
 
 }
 
