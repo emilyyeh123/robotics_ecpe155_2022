@@ -107,7 +107,7 @@ void motorRightTurn90(){
 
 
     while(1){
-        if((revCountRight >= 15) || (revCountLeft >= 15)){
+        if((revCountRight >= 14) || (revCountLeft >= 14)){
             revCountRight = 0;
             revCountLeft = 0;
 
