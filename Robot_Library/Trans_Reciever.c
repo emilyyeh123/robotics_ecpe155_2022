@@ -30,8 +30,7 @@
 #include "Trans_Reciever.h"
 #include "timer.h"
 
-char packet_send[8];
-char packet_rec[8];
+
 
 
 void initSerial(){
@@ -60,7 +59,7 @@ void initSerial(){
 
 
 
-void recieveMess(char *packet_rec){
+void recieveMess(char *packet_rec, char *packet_send){
 
     // Indicate ready to receive
     displayGreenLED();
@@ -115,10 +114,10 @@ void recieveMess(char *packet_rec){
                 displayRedLED();
 
                 // Convert Response to variable x
-                double x = stod(packet_rec[2]);
+                double x = strtod(packet_rec[2]);
 
                 // Convert Response to variable x
-                double y = stod(packet_rec[3]);
+                double y = strtod(packet_rec[3]);
 
                 clearLED();
                 displayBlueLED();

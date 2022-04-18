@@ -9,8 +9,8 @@
 #define MOTOR_CONTROL_H_
 
 extern bool startCount;
-extern double pose[2];
-extern double final_pose[2];
+extern double pose[8];
+extern double final_pose[8];
 extern double angle;
 
 void initMotor();
