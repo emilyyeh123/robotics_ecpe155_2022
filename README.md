@@ -1,6 +1,13 @@
 # bishop_ecpe155_2022
 This is the shared repository for team Bishop (named after a character from the movie Aliens) for the Spring 2022 ECPE 155 Robotics Class. The team includes Emily Yeh and Uri Grunder.
 
+## Lab 7
+In Lab 7 we aimed to design a more complex object avoidence function that can help the robot navigate from a starting position to a user defined position in the global reference frame.
+
+A function for global navigation was established during Lab 6. This navigation function takes in user defined "x" and "y" coordinates (in centimeters) and compares it with the robot's current location. The robot is then oriented towards the final position and begins to move towards it. This function is called `nav_xy` and can be found in the Robot Library Folder as: [Motor_Control.c](Robot_Library/Motor_Control.c) and [Motor_Control.h](Robot_Library/Motor_Control.h). A summary of this function can be seen in the Lab 6 section of this document.
+
+The global navigation function currently can oreient the robot, move towards a final destination, stop once its reached the destination, and transmit a "task completion" signal to the Pi but it must be modified to take constantly take in sensor data and alter functionality if an obstacle is sensed. To accomplish this, it is proposed that a new object avoidence function be developed. The pseudocode for this function is described in Lab_7 under: [Lab_7_Psudeocode.md](Lab_7/Lab_7_Psudeocode.md). This code is still under development and has not yet been tested. However, sensor data remains to be successfully transmitted between the Tiva and the Raspberry Pi.
+
 ## Lab 6
 In Lab 6 we designed a communication protocol to send and receive data between the Tiva and the Raspberry Pi. Using this protocol, we plan to control robot motion using commands passed from the Raspberry Pi to the Tiva.
 
@@ -65,7 +72,7 @@ To minimize the number of parameters passed to the Tiva from the Raspberry Pi, t
     - Function that rotates the robot from its initial orientation to face a user specified angle between positive and negative 90 degrees.
       - User input is limited to the domain of arcTan to ensure the number transmitted from the Raspberry Pi stays within the bounds of 1 byte (0 to 255)
 
-  - nav_xy(double x, double y)
+  - `nav_xy(double x, double y)`
     - Function to navigate the robot from its initial position to a global destination defined by the user.
 
 ### Raspberry Pi 
@@ -80,7 +87,7 @@ A User Interface has been developed on the Raspberry Pi to aid in user control o
 
   - When the actions have been completed and the Pi has been notified, it will respawn the main menu to prompt the user what kind of action they would like the robot to perform.
 
-This user interface successfully transmits and recieves data as shown in [Logic Analyzer Screenshot](Lab_6/Logic%Analyzer%Screenshot.png). However, the more complex motion control of the robot are still being validated.
+This user interface successfully transmits and recieves data as shown in [Logic Analyzer Screenshot](Lab_6/Logic%Analyzer%Screenshot.png). IR data is also sucessfully transmittable between the Tiva and the Raspberry Pi. However, the more complex motion control of the robot are still being validated.
 
 
 
