@@ -6,7 +6,9 @@ In Lab 7 we aimed to design a more complex object avoidence function that can he
 
 A function for global navigation was established during Lab 6. This navigation function takes in user defined "x" and "y" coordinates (in centimeters) and compares it with the robot's current location. The robot is then oriented towards the final position and begins to move towards it. This function is called `nav_xy` and can be found in the Robot Library Folder as: [Motor_Control.c](Robot_Library/Motor_Control.c) and [Motor_Control.h](Robot_Library/Motor_Control.h). A summary of this function can be seen in the Lab 6 section of this document.
 
-The global navigation function currently can oreient the robot, move towards a final destination, stop once its reached the destination, and transmit a "task completion" signal to the Pi but it must be modified to take constantly take in sensor data and alter functionality if an obstacle is sensed. To accomplish this, it is proposed that a new object avoidence function be developed. The pseudocode for this function is described in Lab_7 under: [Lab_7_Psudeocode.md](Lab_7/Lab_7_Psudeocode.md). This code is still under development and has not yet been tested. However, sensor data remains to be successfully transmitted between the Tiva and the Raspberry Pi.
+The global navigation function currently can orient the robot, move towards a final destination, stop once its reached the destination, and transmit a "task completion" signal to the Pi but it must be modified to take constantly take in sensor data and alter functionality if an obstacle is sensed. To accomplish this, it is proposed that a new object avoidence function be developed. The pseudocode for this function is described in Lab_7 under: [Lab_7_Psudeocode.md](Lab_7/Lab_7_Pseudocode.md). This code is still under development and has not yet been tested. However, sensor data remains to be successfully transmitted between the Tiva and the Raspberry Pi.
+
+We have added a new command to test this obstacle avoidance function. The transmit signal has been set up on the pi as another menu function under movement. It asks for 2 inputs: an X and Y coordinate. It will pass these inputs as an individual byte of data and the Tiva will use these values in the a `nav_xy` function that implements obstacle avoidance. This case has been prepared on the Tiva just like the other movement functions and will implement the navigation function once we are able to solve the navigation and distance issues.
 
 ## Lab 6
 In Lab 6 we designed a [communication protocol](Command_Data%20Planner.xlxs) to send and receive data between the Tiva and the Raspberry Pi. Using this protocol, we can  control the robot using commands passed from the Raspberry Pi to the Tiva. We set the maximum number of bytes (sent and received) to 8 and declared send/receive arrays of size 8 on the Tiva. A logic analyzer was used to observe communication between the two boards and confirm that data was being sent properly. The [Logic Analyzer Screenshot](Lab_6/Logic%20Analyzer%20Screenshot.png) shows data recieved on the Tiva from the Raspberry Pi through channel 9 and a response recieved on the Raspberry Pi from the Tiva through channel 1.
@@ -68,7 +70,7 @@ To minimize the number of parameters passed to the Tiva from the Raspberry Pi, t
 
   - `motorSelfOrient()`
     - Function that rotates the robot from its intial orientation to face its destination position.
-      - Assigns the robots oreientation the value of the global variable `angle`. 
+      - Assigns the robots orientation the value of the global variable `angle`. 
       - Converts the angle to a number of ticks that can be tracked by the quadrature encoder.
       - Based on the sign of the angle, the robot will rotate clock-wise or counterclock-wise until the desired orentation is met.
       - Angle is assumed to be in radians
@@ -83,7 +85,7 @@ To minimize the number of parameters passed to the Tiva from the Raspberry Pi, t
 ### Raspberry Pi 
 A User Interface has been developed on the Raspberry Pi to aid in user control of basic robot motor functions. This code is included in the raspberryPi folder in the main branch of the repository as [uartComm.py](raspberryPi/uartComm.py). A high-level description of the code can be found in [raspberryPi/README.md](raspberryPi/README.md).
 
-This user interface successfully transmits and recieves data as shown in [Logic Analyzer Screenshot](Lab_6/Logic%Analyzer%Screenshot.png). IR data is also sucessfully transmittable between the Tiva and the Raspberry Pi. However, the more complex motion control of the robot are still being validated.
+This user interface successfully transmits and recieves data as shown in [Logic Analyzer Screenshot](Lab_6/Logic%20Analyzer%20Screenshot.png). IR data is also sucessfully transmittable between the Tiva and the Raspberry Pi. However, the more complex motion control of the robot are still being validated.
 
 ## Lab 5
 In Lab 5 we attached three Infrared (IR) Sensors to the robot chasis and created a program that used those sensors to avoid objects that approach the robot sides and rear. 
