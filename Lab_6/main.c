@@ -31,6 +31,7 @@
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
 #include "timer.h"
+#include "IR_Sensor.h"
 
 
 
@@ -49,18 +50,33 @@
 #define leftIR 0x12
 #define backIR 0x13
 
-char packet_send[3] = {startCommand, 0x02, endCommand};
 // can receive up to 8 bytes of data
 // 3 bytes reserved for start (0xAA), command, end (0x55)
 char packet_rec[8];
+char packet_send[8];
 
 int main(void)
 {
     initSerial();
     initLED();
     initMotor();
+    initIRSensor();
+
+    uint32_t leftSensor = 0;
+    uint32_t rightSensor = 0;
+    uint32_t backSensor = 0;
 
     while(1){
+        // reset packet_rec
+        for(int i = 0; i < 8; i++){
+            packet_rec[i] = 0x00;
+        }
+
+        // reset packet_send
+        packet_send[0] = startCommand;
+        for(int i = 1; i < 8; i++){
+            packet_send[i] = 0x00;
+        }
 
         //motorForward();
         //travelTime(2);
@@ -89,6 +105,7 @@ int main(void)
                 // TICK-BASED MOTOR FORWARD FUNCTION HERE
                 // desired distance will be returned by packet_rec[2]
                 packet_send[1] = 0x31;
+                packet_send[2] = endCommand;
                 for(int i = 0; i < 3; i++) {
                      UARTCharPut(UART1_BASE,packet_send[i]);
                 }
@@ -98,6 +115,7 @@ int main(void)
                 // TICK-BASED MOTOR FORWARD FUNCTION HERE
                 // desired distance will be returned by packet_rec[2]
                 packet_send[1] = 0x32;
+                packet_send[2] = endCommand;
                 for(int i = 0; i < 3; i++) {
                      UARTCharPut(UART1_BASE,packet_send[i]);
                 }
@@ -105,6 +123,7 @@ int main(void)
             case turnRight:
                 // REPLACE THE FOLLOWING CODE
                 packet_send[1] = 0x33;
+                packet_send[2] = endCommand;
                 for(int i = 0; i < 3; i++) {
                      UARTCharPut(UART1_BASE,packet_send[i]);
                 }
@@ -112,26 +131,37 @@ int main(void)
             case turnLeft:
                 // REPLACE THE FOLLOWING CODE
                 packet_send[1] = 0x34;
+                packet_send[2] = endCommand;
                 for(int i = 0; i < 3; i++) {
                      UARTCharPut(UART1_BASE,packet_send[i]);
                 }
                 break;
             case rightIR:
-                packet_send[1] = 0x48;
-                for(int i = 0; i < 3; i++) {
-                     UARTCharPut(UART1_BASE,packet_send[i]);
+                rightSensor = getSensorData1();
+                packet_send[1] = (rightSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+                packet_send[2] = rightSensor & 0xFF; // send lower 8 bits of 16-bit data
+                packet_send[3] = endCommand;
+                for(int i = 0; i < 4; i++){
+                    UARTCharPut(UART1_BASE,packet_send[i]);
                 }
+                rightSensor = 0;
                 break;
             case leftIR:
-                packet_send[1] = 0x49;
-                for(int i = 0; i < 3; i++) {
-                     UARTCharPut(UART1_BASE,packet_send[i]);
+                leftSensor = getSensorData1();
+                packet_send[1] = (leftSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+                packet_send[2] = leftSensor & 0xFF; // send lower 8 bits of 16-bit data
+                packet_send[3] = endCommand;
+                for(int i = 0; i < 4; i++){
+                    UARTCharPut(UART1_BASE,packet_send[i]);
                 }
                 break;
             case backIR:
-                packet_send[1] = 0x50;
-                for(int i = 0; i < 3; i++) {
-                     UARTCharPut(UART1_BASE,packet_send[i]);
+                backSensor = getSensorData1();
+                packet_send[1] = (backSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+                packet_send[2] = backSensor & 0xFF; // send lower 8 bits of 16-bit data
+                packet_send[3] = endCommand;
+                for(int i = 0; i < 4; i++){
+                    UARTCharPut(UART1_BASE,packet_send[i]);
                 }
                 break;
             default:
