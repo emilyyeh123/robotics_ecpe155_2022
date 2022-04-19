@@ -9,10 +9,10 @@
 #include <stdbool.h>
 #include <math.h>
 
+#include "inc/tm4c123gh6pm.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
 #include "inc/hw_gpio.h"
-#include "inc/tm4c123gh6pm.h"
 
 #include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
@@ -20,6 +20,9 @@
 #include "driverlib/debug.h"
 #include "driverlib/pwm.h"
 #include "driverlib/uart.h"
+#include "driverlib/timer.h"
+#include "driverlib/interrupt.h"
+#include "driverlib/systick.h"
 
 #include "PWM.h"
 #include "Motor_Control.h"
@@ -27,6 +30,9 @@
 #include "LED.h"
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
+#include "timer.h"
+
+
 
 // packet structure
 #define startCommand 0xAA
@@ -39,7 +45,9 @@
 #define turnLeft 0x04
 
 // IR Commands
-// INCLUDE IR COMMANDS HERE
+#define rightIR 0x11
+#define leftIR 0x12
+#define backIR 0x13
 
 char packet_send[3] = {startCommand, 0x02, endCommand};
 // can receive up to 8 bytes of data
@@ -50,15 +58,12 @@ int main(void)
 {
     initSerial();
     initLED();
+    initMotor();
 
     while(1){
-        //clear packet_rec
-        for(int i = 0; i < 8; i++){
-            packet_rec[i] = 0x00;
-        }
 
-        // Indicate ready to receive
-        displayGreenLED();
+        //motorForward();
+        //travelTime(2);
 
         // Wait until a byte is received
         while(!UARTCharsAvail(UART1_BASE)){}
@@ -111,7 +116,24 @@ int main(void)
                      UARTCharPut(UART1_BASE,packet_send[i]);
                 }
                 break;
-            //include IR cases here once implemented
+            case rightIR:
+                packet_send[1] = 0x48;
+                for(int i = 0; i < 3; i++) {
+                     UARTCharPut(UART1_BASE,packet_send[i]);
+                }
+                break;
+            case leftIR:
+                packet_send[1] = 0x49;
+                for(int i = 0; i < 3; i++) {
+                     UARTCharPut(UART1_BASE,packet_send[i]);
+                }
+                break;
+            case backIR:
+                packet_send[1] = 0x50;
+                for(int i = 0; i < 3; i++) {
+                     UARTCharPut(UART1_BASE,packet_send[i]);
+                }
+                break;
             default:
                 // display red light if invalid command passed
                 // theoretically should never receive invalid command

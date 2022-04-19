@@ -24,6 +24,7 @@
 #include "Motor_Control.h"
 #include "PWM.h"
 #include "quadEncoder.h"
+#include "timer.h"
 
 uint16_t revCountLeft;
 uint16_t revCountRight;
