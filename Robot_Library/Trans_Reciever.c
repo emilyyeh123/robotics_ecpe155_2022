@@ -28,6 +28,9 @@
 #include "LED.h"
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
+#include "timer.h"
+
+
 
 void initSerial(){
 
@@ -53,4 +56,121 @@ void initSerial(){
 
 
 
+
+/*
+void recieveMess(char *packet_rec, char *packet_send){
+
+    // Indicate ready to receive
+    displayGreenLED();
+    // Wait until a response is received
+    while(!UARTCharsAvail(UART1_BASE)) {}
+
+    // Store the incoming data to a specified array
+    for(int i = 0; i < sizeof(packet_rec); i++) {
+            packet_rec[i] = UARTCharGet(UART1_BASE);
+    }
+
+    clearLED();
+
+    // If the initialize flag is receive
+    if ((packet_rec[0] == 0xAA) & (packet_rec[2] == 0x55)) {
+
+        //Commands type based on the second element
+        switch(packet_rec[1]) {
+
+            // move forward
+            case(0x01):{
+                motorForward();
+                travelTime(packet_rec[2]);
+
+                break;
+            }
+
+            // move backwards
+            case(0x02):{
+                motorBackward();
+                travelTime(packet_rec[2]);
+
+                break;
+            }
+
+            // turn right
+            case(0x03):{
+                motorUserOrient(-90);
+
+                break;
+            }
+
+            // turn left
+            case(0x04):{
+                motorUserOrient(90);
+
+                break;
+            }
+
+            // When navigation command is received
+            case (0x81):{
+                displayRedLED();
+
+                // Convert Response to variable x
+                double x = stod(packet_rec[2]);
+
+                // Convert Response to variable x
+                double y = stod(packet_rec[3]);
+
+                clearLED();
+                displayBlueLED();
+
+                nav_xy(x, y);
+
+                // If robot has reached goal
+                if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
+                    jobComplete();
+                }
+                // Else indicate an object or error of some kind
+                else if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
+                    objectDetected(packet_send);
+                }
+            }
+
+        }
+
+    displayBlueLED();
+    SysCtlDelay(5000000);
+    clearLED();
+}
+
+}
+
+
+
+
+void jobComplete(char *packet_send){
+    motorStop();
+    clearLED();
+    displayGreenLED();
+    packet_send[1] = 0xDD;
+    for(int i = 0; i < 3; i++) {
+        UARTCharPut(UART1_BASE,packet_send[i]);
+        }
+    return;
+}
+
+
+
+
+
+void objectDetected(char *packet_send){
+    motorStop();
+    clearLED();
+    displayRedLED();
+
+    packet_send[1] = 0xDD;
+    for(int i = 0; i < 3; i++) {
+        UARTCharPut(UART1_BASE,packet_send[i]);
+    }
+    return;
+
+}
+*/
 

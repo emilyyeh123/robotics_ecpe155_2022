@@ -9,5 +9,10 @@
 #define TRANS_RECIEVER_H_
 
 void initSerial();
+//void recieveMess(char *packet_rec, char *packet_send);
+//void jobComplete();
+//void objectDetected(char *packet_send);
+
+
 
 #endif /* TRANS_RECIEVER_H_ */

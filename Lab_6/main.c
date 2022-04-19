@@ -22,11 +22,12 @@
 #include "driverlib/uart.h"
 
 #include "PWM.h"
-#include "Motor_Control.h"
+//#include "Motor_Control.h"
 #include "quadEncoder.h"
 #include "LED.h"
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
+
 
 // packet structure
 #define startCommand 0xAA
@@ -39,7 +40,9 @@
 #define turnLeft 0x04
 
 // IR Commands
-// INCLUDE IR COMMANDS HERE
+#define rightIR 0x11
+#define leftIR 0x12
+#define backIR 0x13
 
 char packet_send[3] = {startCommand, 0x02, endCommand};
 // can receive up to 8 bytes of data
@@ -111,7 +114,24 @@ int main(void)
                      UARTCharPut(UART1_BASE,packet_send[i]);
                 }
                 break;
-            //include IR cases here once implemented
+            case rightIR:
+                packet_send[1] = 0x48;
+                for(int i = 0; i < 3; i++) {
+                     UARTCharPut(UART1_BASE,packet_send[i]);
+                }
+                break;
+            case leftIR:
+                packet_send[1] = 0x49;
+                for(int i = 0; i < 3; i++) {
+                     UARTCharPut(UART1_BASE,packet_send[i]);
+                }
+                break;
+            case backIR:
+                packet_send[1] = 0x50;
+                for(int i = 0; i < 3; i++) {
+                     UARTCharPut(UART1_BASE,packet_send[i]);
+                }
+                break;
             default:
                 // display red light if invalid command passed
                 // theoretically should never receive invalid command

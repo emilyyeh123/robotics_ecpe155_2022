@@ -26,14 +26,16 @@
 #include "PWM.h"
 #include "Motor_Control.h"
 #include "quadEncoder.h"
+#include "timer.h"
 
+bool startCount = false;
 double angle;
-double pose[] = {0, 0, 0};
-double final_pose[] = {0, 0, 0};
+double pose[2];
+double final_pose[2];
 
 // Initialize the motor
-void initMotor(uint16_t period){
-    initPWM(period);
+void initMotor(){
+    initPWM(800);
 
     // Enable GPIOE peripheral (in1 & in2) and wait for it to be ready
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
@@ -51,16 +53,11 @@ void initMotor(uint16_t period){
 
 }
 
-void giveGoal(uint16_t x, uint16_t y) {
-    final_pose[0] = x;
-    final_pose[1] = y;
-}
 
-
-// Move the robot forward at a user specified speed
-void motorForward(uint16_t PWLeft, uint16_t PWRight){
+// Move the robot forward
+void motorForward(){
     // set pulse width
-    setPW(PWLeft, PWRight);
+    setPW(300, 311);
 
     // based on the HUB-ee control sheet,
     // Forward in1: Low, Forward in2: High
@@ -70,13 +67,14 @@ void motorForward(uint16_t PWLeft, uint16_t PWRight){
     GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_5 | GPIO_PIN_1), (GPIO_PIN_5 | GPIO_PIN_1));
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, 0);
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
+    startCount = true;
 }
 
 
-// Move the robot backward at a user specified speed
-void motorBackward(uint16_t PWLeft, uint16_t PWRight){
+// Move the robot backward
+void motorBackward(){
     // set pulse width
-    setPW(PWLeft, PWRight);
+    setPW(300, 311);
 
     // based on the HUB-ee control sheet,
     // Forward in1: High, Forward in2: Low
@@ -86,6 +84,21 @@ void motorBackward(uint16_t PWLeft, uint16_t PWRight){
     GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_4), (GPIO_PIN_2 | GPIO_PIN_4));
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
+}
+
+
+
+// allow motion for specified time
+void travelTime(uint16_t distance){
+    // Convert User distance to time
+    int time = distance / 13.3 * 1000;
+
+    // Set a timer (default in milliseconds?)
+    SysTickPeriodSet(time);
+    SysTickEnable();
+
+    // When timer runs down, stop the robot
+    motorStop();
 }
 
 // Function to turn the robot right approximately 90 degrees
@@ -124,7 +137,7 @@ void motorLeftTurn90(){
     revCountLeft = 0;
     // The Period must be set to 800 for this function to work correctly
     // set pulse width
-    setPW(200, 200);
+    setPW(210, 200);
 
     // based on the HUB-ee control sheet,
     // Forward in1: High, Forward in2: Low
@@ -146,22 +159,6 @@ void motorLeftTurn90(){
 
 }
 
-// Function to help keep the robot traveling in a straight line
-void motorCorrection(){
-    // Correct the robot trajectory if the left wheel moves faster than the right
-    if((revCountRight >= (revCountLeft + 1)) && (revCountRight <= 200)) {
-        // Stop moving the left wheel and allow the right wheel to catch up
-        motorForward(200, 225);
-        SysCtlDelay(500);
-    }
-
-    // Correct the robot trajectory if the left wheel moves faster than the right
-    if((revCountLeft >= (revCountRight + 1)) && (revCountLeft <= 200)) {
-        // Stop moving the left wheel and allow the right wheel to catch up
-        motorForward(200, 225);
-        SysCtlDelay(500);
-    }
-}
 
 // Function to make the robot move in rectangle defined by a number of ticks
 void motorRect(uint16_t x, uint16_t y){
@@ -177,7 +174,7 @@ void motorRect(uint16_t x, uint16_t y){
 
         if(revCountLeft == x || revCountRight == x) {
             motorRightTurn90();
-            motorForward(200,200);
+            motorForward();
             SysCtlDelay(500);
             revCountLeft = x + 1;
             revCountRight = x + 1;
@@ -186,7 +183,7 @@ void motorRect(uint16_t x, uint16_t y){
 
         if(revCountLeft == x + y  || revCountRight == x + y){
             motorRightTurn90();
-            motorForward(200,200);
+            motorForward();
             SysCtlDelay(500);
             revCountLeft = 0;
             revCountRight = 0;
@@ -210,12 +207,18 @@ void motorStop(){
     GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5), (GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_4 | GPIO_PIN_5));
 }
 
+
+
+
 void motorBackAvoid()
 {
-    motorBackward(200,200);
+    motorBackward();
     while((revCountRight <= 40) && (revCountLeft <= 40)){}
     clearCount();
 }
+
+
+
 
 // Turn the robot 45 degrees to the left
 void motorLeftTurn45(){
@@ -223,7 +226,7 @@ void motorLeftTurn45(){
     revCountLeft = 0;
     // The Period must be set to 800 for this function to work correctly
     // set pulse width
-    setPW(200, 200);
+    setPW(210, 200);
 
     // based on the HUB-ee control sheet,
     // Forward in1: High, Forward in2: Low
@@ -243,6 +246,10 @@ void motorLeftTurn45(){
         }
     }
 }
+
+
+
+
 
 // Turn the robot 45 degrees to the right
 void motorRightTurn45(){
@@ -272,6 +279,10 @@ void motorRightTurn45(){
     }
 }
 
+
+
+
+
 // When robot is bumped on the right, back up and turn left
 void motorAvoidLeftBump(){
     clearCount();
@@ -287,6 +298,10 @@ void motorAvoidLeftBump(){
     motorStop();
     SysCtlDelay(500000);
 }
+
+
+
+
 
 // When robot is bumped on the left, back up and turn right
 void motorAvoidRightBump(){
@@ -304,79 +319,116 @@ void motorAvoidRightBump(){
     SysCtlDelay(500000);
 }
 
+
+
+
 // Takes an angle (within plus/mins 90 degrees) and turns robot to face it.
-void motorOrient(uint16_t angle){
+void motorSelfOrient(){
     revCountRight = 0;
     revCountLeft = 0;
     // The Period must be set to 800 for this function to work correctly
     // set pulse width
     setPW(200, 200);
 
-        angle = lround(angle*30/3.14);
-        pose[2] = angle;
+    // Update the pose to this angle in Radians
+    pose[2] = angle;
 
-        // If the Angle is positive, robot rotates counter-clockwise
-        if(angle == abs(angle))
-        {
-            GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_5), (GPIO_PIN_2 | GPIO_PIN_5));
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
+    // Convert the angle to a number of ticks for the encoder to use
+    int ticks = lround(angle*28/3.14);
 
-            while(1){
-                if((revCountRight >= angle) || (revCountLeft >= angle)){
-                    revCountRight = 0;
-                    revCountLeft = 0;
+    // If the Angle is positive, robot rotates counter-clockwise
+    if(ticks == abs(ticks))
+    {
+        GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_5), (GPIO_PIN_2 | GPIO_PIN_5));
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
 
-                    return;
-                }
+        while(1){
+            if((revCountRight >= ticks) || (revCountLeft >= ticks)){
+                revCountRight = 0;
+                revCountLeft = 0;
+                return;
             }
         }
+    }
 
-        // If the Angle is negative, robot rotates clockwise
-        if(angle == abs(angle))
-        {
-            angle = angle*(-1);
-            GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_4), (GPIO_PIN_1 | GPIO_PIN_4));
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, 0);
-            GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
+    // If the Angle is negative, robot rotates clockwise
+    if(ticks < abs(ticks))
+    {
+        ticks = ticks*(-1);
+        GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_4), (GPIO_PIN_1 | GPIO_PIN_4));
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, 0);
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
 
-            while(1){
-                if((revCountRight >= angle) || (revCountLeft >= angle)){
-                    revCountRight = 0;
-                    revCountLeft = 0;
+        while(1){
+            if((revCountRight >= ticks) || (revCountLeft >= ticks)){
+                revCountRight = 0;
+                revCountLeft = 0;
 
-                    return;
-                }
+                return;
             }
         }
+    }
 
 }
 
 
-void getAngle(uint16_t x, uint16_t y){
-    x = final_pose[0] - pose[0];
-    y = final_pose[1] - pose[1];
 
-    angle = atan(y/x);
+
+
+// User defined angle to turn robot, +/- 90
+void motorUserOrient(uint8_t theta){
+    revCountRight = 0;
+    revCountLeft = 0;
+    // The Period must be set to 800 for this function to work correctly
+    // set pulse width
+    setPW(200, 200);
+
+    //convert user given degrees to radians
+    double angle = theta*3.14/180;
+
+    // Convert the angle to a number of ticks for the encoder to use
+    theta = angle*28/3.14;
+
+    // If the Angle is positive, robot rotates counter-clockwise
+    if(theta == abs(theta))
+    {
+        GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_2 | GPIO_PIN_5), (GPIO_PIN_2 | GPIO_PIN_5));
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_1, 0);
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
+
+        while(1){
+            if((revCountRight >= theta) || (revCountLeft >= theta)){
+                revCountRight = 0;
+                revCountLeft = 0;
+                return;
+            }
+        }
+    }
+
+    // If the Angle is negative, robot rotates clockwise
+    if(theta < abs(theta))
+    {
+        theta = theta*(-1);
+        GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_1 | GPIO_PIN_4), (GPIO_PIN_1 | GPIO_PIN_4));
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, 0);
+        GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_5, 0);
+
+        while(1){
+            if((revCountRight >= theta) || (revCountLeft >= theta)){
+                revCountRight = 0;
+                revCountLeft = 0;
+
+                return;
+            }
+        }
+    }
+
 }
 
 
-// Move the robot to more easily rotate towards an angle
-void checkAngle(uint16_t angle){
-    if(angle > 1.57) {
-        motorLeftTurn180();
-        angle = angle - 3.14;
-    }
 
-    if(angle < 1.57) {
-        motorLeftTurn180();
-        angle = angle + 3.14;
-    }
 
-    else{
-        return;
-    }
-}
 
 // Function to turn the robot left approximately 180 degrees
 void motorLeftTurn180(){
@@ -396,12 +448,77 @@ void motorLeftTurn180(){
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
 
     while(1){
-        if((revCountRight >= 30) || (revCountLeft >= 30)){
+        if((revCountRight >= 28) || (revCountLeft >= 28)){
             revCountRight = 0;
             revCountLeft = 0;
 
             return;
         }
     }
+}
+
+
+
+
+
+
+// Determine what angle the robot should face to arrive at the goal pose (in radians)
+void getAngle(){
+    double x = final_pose[0] - pose[0];
+    double y = final_pose[1] - pose[1];
+
+    angle = atan(y/x);
+}
+
+
+
+
+// Move the robot 180 degrees if the goal is located behind the robot
+void checkAngle(){
+    if((final_pose[0] - pose[0]) < 0) {
+        motorLeftTurn180();
+        pose[0] = pose[0] * (-1);
+    }
+
+    else {
+        return;
+    }
+}
+
+
+
+
+
+
+// Navigate the robot to a point on a plane
+void nav_xy(double x, double y){
+    //assign final position
+    final_pose[0] = x;
+    final_pose[1] = y;
+
+    initBumpSensorInterrupt();
+    initIRSensor();
+
+    // ensure the robot can orient to the goal position
+    checkAngle();
+
+    // determine the ticks needed to get to the goal position
+    getAngle();
+
+    // Rotate robot to face goal position
+    motorOrient();
+
+    motorForward();
+    if(startCount == true){
+        initDrivetimer();
+    }
+
+    if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
+        motorStop();
+        startCount == false;
+        return;
+    }
+// Revisions needed to incorporate sensor data for object avoidence
 
 }
+
