@@ -1,7 +1,7 @@
 # Lab 6 Challenges and Solutions
 
   ## Completed Work 
-    ### Tiva ticks to velocity
+   ### Tiva ticks to velocity
   Serial communication has been successfully implemented between the Raspberry Pi and the Tiva. However, motor control is through the Raspberry Pi is still under evaluation.
   To navigate the robot from an initial position to a specified point on a coordinate plane, the motor control source code had to be restructured. 
     - Previously, the source code was based on the ticks counted by the quadrature encoder. This allowed for the speed of each wheel on the robot to be specified by the user. It proved very effective at rotating the robot and showed some promise in rectifying robot speed if the robot began to deviate from a straight line.
@@ -16,7 +16,7 @@
   
   With the velocity of the robot in hand a new function was created in Motor_Control.c that could take in a single distance parameter, given in centimeters, and determine the time necessesary for the robot to reach a given point. This was significant because a timer could then be developed to updated the robots local position at regular time intervals.
   
-    ### Raspberry Pi User Interface
+   ### Raspberry Pi User Interface
   The user interface has been completed for simple navigation function on the robot and to recieve sensor data. This coupled with the updated basic motor control source code on the Tiva should allow the Raspberry Pi to wireless control simple motion on the robot. 
   
   Serial communication between the two boards has been successful. 
