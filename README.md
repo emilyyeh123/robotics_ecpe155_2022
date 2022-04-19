@@ -76,20 +76,9 @@ To minimize the number of parameters passed to the Tiva from the Raspberry Pi, t
     - Function to navigate the robot from its initial position to a global destination defined by the user.
 
 ### Raspberry Pi 
-A User Interface has been developed on the Raspberry Pi to aid in user control of basic robot motor functions. This code is included in the raspberryPi folder in the main branch of the repository as [uartComm.py](raspberryPi/uartComm.py). A high-level description of the code will follow.
-  - User is prompted to move the robot, retreive IR data from the robot, or to exit the program.
-    - if the `move` selection is made
-      - User is prompted to make the robot move forward, backward, turn right, or turn left.
-      - If linear motion is selected, either forward or backward, user will be prompted to select a distance in centimeters between 0 and 255 cm. This command and parameters will then be transmitted to the Tiva
-      - If the user selects a right or left turn, there are no additional parameters. It is assumed that the turn will be 90 degrees either counterclock-wise or clock-wise. The command will then be transmitted to the Tiva for execution.
-
-    - Once the commands have been transmitted, the Pi will enter a recieving mode where it will await data transmitted from the Tiva to indicate that the motion was completed. This data will be stored in a character array called `respPacket`.
-
-  - When the actions have been completed and the Pi has been notified, it will respawn the main menu to prompt the user what kind of action they would like the robot to perform.
+A User Interface has been developed on the Raspberry Pi to aid in user control of basic robot motor functions. This code is included in the raspberryPi folder in the main branch of the repository as [uartComm.py](raspberryPi/uartComm.py). A high-level description of the code can be found in [raspberryPi/README.md](raspberryPi/README.md).
 
 This user interface successfully transmits and recieves data as shown in [Logic Analyzer Screenshot](Lab_6/Logic%Analyzer%Screenshot.png). IR data is also sucessfully transmittable between the Tiva and the Raspberry Pi. However, the more complex motion control of the robot are still being validated.
-
-
 
 ## Lab 5
 In Lab 5 we attached three Infrared (IR) Sensors to the robot chasis and created a program that used those sensors to avoid objects that approach the robot sides and rear. 
@@ -114,7 +103,6 @@ The [Sensor Verification](Lab_5/sensorVerification.md) file describes how these 
 showing that the IR sensors work independent of all other robot features.
 
 Additionally, Emily did amazing work in configuring the GPIO pins to the ADC alternate function.
-
 
 ## Lab 4
 In Lab 4, we designed, printed and attached a bumper to the robot. Bump switches were used to signal the robot to take specified actions when a bumper was depressed.
