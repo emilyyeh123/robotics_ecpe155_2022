@@ -9,25 +9,30 @@ A function for global navigation was established during Lab 6. This navigation f
 The global navigation function currently can oreient the robot, move towards a final destination, stop once its reached the destination, and transmit a "task completion" signal to the Pi but it must be modified to take constantly take in sensor data and alter functionality if an obstacle is sensed. To accomplish this, it is proposed that a new object avoidence function be developed. The pseudocode for this function is described in Lab_7 under: [Lab_7_Psudeocode.md](Lab_7/Lab_7_Psudeocode.md). This code is still under development and has not yet been tested. However, sensor data remains to be successfully transmitted between the Tiva and the Raspberry Pi.
 
 ## Lab 6
-In Lab 6 we designed a communication protocol to send and receive data between the Tiva and the Raspberry Pi. Using this protocol, we plan to control robot motion using commands passed from the Raspberry Pi to the Tiva.
+In Lab 6 we designed a [communication protocol](Command_Data%20Planner.xlxs) to send and receive data between the Tiva and the Raspberry Pi. Using this protocol, we can  control the robot using commands passed from the Raspberry Pi to the Tiva. We set the maximum number of bytes (sent and received) to 8 and declared send/receive arrays of size 8 on the Tiva. A logic analyzer was used to observe communication between the two boards and confirm that data was being sent properly. The [Logic Analyzer Screenshot](Lab_6/Logic%20Analyzer%20Screenshot.png) shows data recieved on the Tiva from the Raspberry Pi through channel 9 and a response recieved on the Raspberry Pi from the Tiva through channel 1.
 
 ### Tiva Robot Library Updates
-Two new functions were created in the robot function library to define the Tiva's role in serial communication. These function are included in the Robot_Library folder: [Trans_Reciever.c](Robot_Library/Trans_Reciever.c) and [Trans_Reciever.h](Robot_Library/Trans_Reciever.h). This function has been expanded since its initial sucess. A logic analyzer was used to observe communication between the two boards. A sceenshot was included in the Lab 6 folder: [Logic Analyzer Screenshot](Lab_6/Logic%Analyzer%Screenshot.png). This image shows data recieved on the Tiva from the Raspberry Pi through channel 9 and a response recieved on the Raspberry Pi from the Tiva through channel 1. A high-level description of each function follows.
+Two new files, [Trans_Reciever.c](Robot_Library/Trans_Reciever.c) and [Trans_Reciever.h](Robot_Library/Trans_Reciever.h), were created in the robot peripheral library to define the Tiva's role in serial communication. A high-level description of each function follows.
 
-  - `initiSerial()`
-     - Initize pins for serial communication by enabling the UART4 and GPIO C Modules and assigning reviever and transmitter pins.
+- `initSerial()`
+  - Initialize pins for serial communication by enabling the UART4 and GPIO C Modules and assigning reviever and transmitter pins.
 
-  - `recieverMess()`
-    - A green LED is enabled from the Tiva board to indicate that the system is waiting for incoming commands from the Raspberry Pi. The Tiva will hold all actions until a string array is transferred to the system. This character array is stored as a global variable `packet_rec`.
-    - The LED is cleared and the saved characater array is compared against a switch/case block. The comparison will only take place if an initialization command is observed in the first element of the character array. A blue LED will be enabled if a command is successfully read.
-    - The second element of the character array is compared against a list of robot function commands. If a match is successful, the Tiva will call on subsequent array elements to define relevant function parameters.
-    - The Tiva will direct the robot to perform the called upon action. Once the action or set of actions is completed, the Tiva will transmit a message of completion to the Raspberry Pi.
-    - If an error occurs or a sensor is triggered, the running function will stop and sensor data will be transmitted to the Raspberry Pi for further instruction. In the event that the robot is unable to complete its original task, a green LED will be turned on to indicate that the Tiva is awaiting instruction or a red LED will be turned on to indicate an error. The transmitting array is described by the 8-element character array `packet_send`.
+- `storeReceivedPacket(char *packet_rec)`
+  - The Tiva board waits for incoming commands from the Raspberry Pi. The Tiva will hold all actions until a string array is transferred to the system. This character array is stored as a global variable `packet_rec`.
+
+- `initRecPacket(char *packet_rec)`
+  - resets/clears receive packet array by setting all 8 elements equal to 0x00
+
+- `initSendPacket(char *packet_send);`
+  - resets/clears send packet array by setting first element equal to the start command and following 7 elements equal to 0x00
+
+- `performAction()`
+  - Elements stored in the receive packet now get analyzed through a switch statement. Cases will only be tested if an initialization command is observed in the first element of the character array.
+  - The second element of the character array is compared against a list of robot function commands. If a match is successful, the Tiva will call on subsequent array elements to define relevant function parameters.
+  - The Tiva will direct the robot to perform the called upon action. Once the action or set of actions is completed, the Tiva will transmit a message of completion to the Raspberry Pi.
+  - (this following has been commented out and remains untested) If an error occurs or a sensor is triggered, the running function will stop and sensor data will be transmitted to the Raspberry Pi for further instruction. In the event that the robot is unable to complete its original task, a green LED will be turned on to indicate that the Tiva is awaiting instruction or a red LED will be turned on to indicate an error. The transmitting array is described by the 8-element character array `packet_send`.
 
 The more complex serial control function is currently being validated. 
-
-
-An Excel sheet has been created to detail the commands that can be transmitted by the Raspberry Pi to control the Tiva. This file is included in the main folder of the Respository: [Command_Data Planner.xlxs](Command_Data%Planner.xlxs). The file shows each available function as a hexadecimal value that can be transmitted as a byte within a character array with a maximum of 8 elements.
 
 To minimize the number of parameters passed to the Tiva from the Raspberry Pi, the Motor_Control source code has been modified in the Robot Library folder under [Motor_Control.c](Robot_Library/Motor_Control.c) and [Motor_Control.h](Robot_Library/Motor_Control.h). A summary of the source code modifications are listed below.
   - `motorForward()`
