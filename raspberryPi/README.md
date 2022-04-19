@@ -53,5 +53,7 @@ and back [(Sample Screenshot 2-3)](raspberryPi/piRobotMenu_returnBackIRData_2-3.
 IR sensor data. They all have the same functionality, but each one is set to the proper IR sensor.
 Each screenshot shows the function being used twice to show that the value changes as an obstacle moves near/away from the sensor.
 
-- Tiva splits the IR sensor data into two bytes to send to the pi
-- Pi converts the 2-byte number back to the original 16-bit integer and prints that value 
+- Tiva splits the IR sensor data into two bytes to sends to the pi
+- Pi converts the 2-byte number back to the original 16-bit integer and prints that value
+
+Future Plans: convert this number to a human-understandable range
