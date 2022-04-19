@@ -13,6 +13,7 @@ moveForward = 0x01
 moveBackward = 0x02
 turnRight = 0x03
 turnLeft = 0x04
+moveToXY = 0x05
 
 # IR Commands
 rightIR = 0x11
@@ -40,70 +41,78 @@ def mainMenu():
 
 def moveMenu():
 	while 1:
-		print("\tWhich direction would you like to move?")
+		print("\n\tWhich direction would you like to move?")
 		print("\t0) cancel")
 		print("\t1) move forward")
 		print("\t2) move backward")
 		print("\t3) turn right 90 degrees")
 		print("\t4) turn left 90 degrees")
+		print("\t5) turn left 90 degrees")
 
 		# receive user input
 		try:
 			directionInp = int(input("\t>>> "))
-			if directionInp == 0:
-				return
-			elif directionInp < 1 or directionInp > 4:
-				# default
-				print("\tNOT A VALID OPTION\n")
-			else:
-				sendMovePacket(directionInp)
-				return
 		except:
-			print("\tNOT A VALID OPTION\n")
+			print("\tMUST INPUT INTEGER. TRY AGAIN.")
+
+		if directionInp == 0:
+			return
+		elif directionInp < 1 or directionInp > 5:
+			# default
+			print("\tINTEGER MUST BE BETWEEN 1 AND 5. TRY AGAIN.\n")
+		else:
+			sendMovePacket(directionInp)
+			break
+
+def promptDistance(strDirectionPrompt):
+	print()
+	print(strDirectionPrompt)
+	print("\tEnter a number between 1 and 255 (distance in cm)")
+	print("\tEnter 0 to cancel")
+
+	# receive user input
+	while 1:
+		try:
+			dist = int(input("\t>>> "))
+		except:
+			print("\tMUST INPUT INTEGER. TRY AGAIN.")
+		if dist < 0 or dist > 255:
+			print("\tINTEGER MUST BE BETWEEN 1 AND 255. TRY AGAIN.")
+		else:
+			break
+
+	return dist
 
 def sendMovePacket(dir):
 	packet = []
 	packet.append(struct.pack('B', startCommand))
 
 	if dir == 1:
-		print("\n\tHow far would you like to move?")
-		print("\tEnter a number between 1 and 255 (movement is tick-based)")
-		print("\tEnter 0 to cancel")
-		try:
-			dist = int(input("\t>>> "))
-			if dist == 0:
-				return
-			while dist < 1 or dist > 255:
-				# receive user input
-				print("\tINVALID TRY AGAIN")
-				dist = int(input("\t>>> "))
-		except:
-			print("\tINVALID TRY AGAIN")
-
+		dist = promptDistance("\tHow far would you like to move?")
+		if dist == 0:
+			return
 		packet.append(struct.pack('B', moveForward))
 		packet.append(struct.pack('B', dist))
 	elif dir == 2:
-		print("\n\tHow far would you like to move?")
-		print("\tEnter a number between 1 and 255 (movement is tick-based)")
-		print("\tEnter 0 to cancel")
-		try:
-			dist = int(input("\t>>> "))
-			if dist == 0:
-				return
-			while dist < 1 or dist > 255:
-				# receive user input
-				print("\tINVALID TRY AGAIN")
-				dist = int(input("\t>>> "))
-		except:
-			print("\tINVALID TRY AGAIN")
-
+		dist = promptDistance("\tHow far would you like to move?")
+		if dist == 0:
+			return
 		packet.append(struct.pack('B', moveBackward))
 		packet.append(struct.pack('B', dist))
-	if dir == 3:
+	elif dir == 3:
 		packet.append(struct.pack('B', turnRight))
 	elif dir == 4:
 		packet.append(struct.pack('B', turnLeft))
-
+	elif dir == 5:
+		distX = promptDistance("\tHow far would you like to move in the X direction?")
+		if distX == 0:
+			return
+		distY = promptDistance("\tHow far would you like to move in the Y direction?")
+		if distY == 0:
+			return
+		packet.append(struct.pack('B', moveToXY))
+		packet.append(struct.pack('B', distX))
+		packet.append(struct.pack('B', distY))
 
 	packet.append(struct.pack('B', endCommand))
 	# send all requests
@@ -132,7 +141,7 @@ def sendMovePacket(dir):
 
 def sendIRCommand():
 	while 1:
-		print("\tWhich IR sensor would you like to retreive data from?")
+		print("\n\tWhich IR sensor would you like to retreive data from?")
 		print("\t0) cancel")
 		print("\t1) Right IR Sensor")
 		print("\t2) Left IR Sensor")
