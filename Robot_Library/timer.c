@@ -42,6 +42,7 @@ void initDriveTimer(){
 
     TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
 
+    // Set the time for delay
     period = (SysCtlClockGet() / 10 / 2);
 
     TimerLoadSet(TIMER0_BASE, TIMER_A, period-1);
@@ -49,6 +50,7 @@ void initDriveTimer(){
     TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
     IntMasterEnable();
 
+    // Enable the timer
     TimerEnable(TIMER0_BASE, TIMER_A);
 }
 

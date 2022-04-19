@@ -22,16 +22,18 @@
 #include "driverlib/gpio.h"
 #include "driverlib/debug.h"
 #include "driverlib/pwm.h"
+#include "driverlib/systick.h"
 
 #include "PWM.h"
 #include "Motor_Control.h"
 #include "quadEncoder.h"
 #include "timer.h"
+#include "bumpSensor.h"
 
 bool startCount = false;
 double angle;
-double pose[2];
-double final_pose[2];
+double pose[8];
+double final_pose[8];
 
 // Initialize the motor
 void initMotor(){
@@ -91,15 +93,25 @@ void motorBackward(){
 // allow motion for specified time
 void travelTime(uint16_t distance){
     // Convert User distance to time
-    int time = distance / 13.3 * 1000;
-
+    int time = round(distance / 13.3) * 100000;
+/*
     // Set a timer (default in milliseconds?)
     SysTickPeriodSet(time);
     SysTickEnable();
 
+    while(1){
+        if(SysTickValueGet() >= time){
+            break;
+        }
+    }
+*/
+    SysCtlDelay(time);
     // When timer runs down, stop the robot
     motorStop();
 }
+
+
+
 
 // Function to turn the robot right approximately 90 degrees
 void motorRightTurn90(){
@@ -168,9 +180,6 @@ void motorRect(uint16_t x, uint16_t y){
 
     while(1){
 
-        // I want to add a round function to convert distance to ticks ex: x = 20cm, x = 20*32 = tick numbers
-        motorCorrection();
-        SysCtlDelay(500);
 
         if(revCountLeft == x || revCountRight == x) {
             motorRightTurn90();
@@ -506,11 +515,11 @@ void nav_xy(double x, double y){
     getAngle();
 
     // Rotate robot to face goal position
-    motorOrient();
+    motorSelfOrient();
 
     motorForward();
     if(startCount == true){
-        initDrivetimer();
+        initDriveTimer();
     }
 
     if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){

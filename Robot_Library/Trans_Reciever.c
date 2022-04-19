@@ -57,7 +57,6 @@ void initSerial(){
 
 
 
-/*
 void recieveMess(char *packet_rec, char *packet_send){
 
     // Indicate ready to receive
@@ -113,10 +112,10 @@ void recieveMess(char *packet_rec, char *packet_send){
                 displayRedLED();
 
                 // Convert Response to variable x
-                double x = stod(packet_rec[2]);
+                double x = strtod(packet_rec[2]);
 
                 // Convert Response to variable x
-                double y = stod(packet_rec[3]);
+                double y = strtod(packet_rec[3]);
 
                 clearLED();
                 displayBlueLED();
@@ -172,5 +171,4 @@ void objectDetected(char *packet_send){
     return;
 
 }
-*/
 

@@ -9,6 +9,7 @@
 #define TIMER_H_
 
 void initDriveTimer();
+void Timer0IntHandler(void);
 
 
 #endif /* TIMER_H_ */
