@@ -23,23 +23,18 @@ def main():
 		#camera.capture('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/piImages/img%s.jpg' % i)
 
 	img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/piImages/img%s.jpg' % 4)
-	#img = cv2.imread('/home/pi/Desktop/colorDetection.png')
 	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-	hsvColor = (hsv[640, 360])
+	coord = [720, 360]
+	hsvColor = hsv[coord[1],coord[0]]
 	print(hsvColor)
-	#lowerRed = np.array([60,60,100])
-	#upperRed = np.array([100,50,100])
-	#mask = cv2.inRange(hsv, lowerRed, upperRed)
-	
-	#img = Image.open('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/piImages/img%s.jpg' % 4)
-	#colors = img.getpixel((640,360))
-	#print(colors)
-	#cv2.imshow("hsv", hsv)
-	#cv2.imshow("mask", mask)
-	#img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/piImages/img%s.jpg' % 4)
-	#hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
-	#cv2.imshow("mask2", hsv)
-	#cv2.waitKey(0)
+	imgPoint = cv2.circle(img, coord, radius = 0, color = (0,0,0), thickness = 10)
+	# 3, 159, 125 
+	lowerRed = np.array([0,60,60])
+	upperRed = np.array([20,180,180])
+	mask = cv2.inRange(hsv, lowerRed, upperRed)
+	#cv2.imshow("displayPoint", imgPoint)
+	cv2.imshow("mask", mask)
+	cv2.waitKey(0)
 
 	'''
 	# take 5 pictures and do color detection
