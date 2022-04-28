@@ -57,9 +57,9 @@ void initMotor(){
 
 
 // Move the robot forward
-void motorForward(){
+void motorForward(uint16_t vLeft, uint16_t vRight){
     // set pulse width
-    setPW(300, 311);
+    setPW(vLeft, vRight);
 
     // based on the HUB-ee control sheet,
     // Forward in1: Low, Forward in2: High
@@ -69,7 +69,6 @@ void motorForward(){
     GPIOPinWrite(GPIO_PORTE_BASE, (GPIO_PIN_5 | GPIO_PIN_1), (GPIO_PIN_5 | GPIO_PIN_1));
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_2, 0);
     GPIOPinWrite(GPIO_PORTE_BASE, GPIO_PIN_4, 0);
-    startCount = true;
 }
 
 
@@ -183,7 +182,7 @@ void motorRect(uint16_t x, uint16_t y){
 
         if(revCountLeft == x || revCountRight == x) {
             motorRightTurn90();
-            motorForward();
+            motorForward(300, 311);
             SysCtlDelay(500);
             revCountLeft = x + 1;
             revCountRight = x + 1;
@@ -192,7 +191,7 @@ void motorRect(uint16_t x, uint16_t y){
 
         if(revCountLeft == x + y  || revCountRight == x + y){
             motorRightTurn90();
-            motorForward();
+            motorForward(300, 311);
             SysCtlDelay(500);
             revCountLeft = 0;
             revCountRight = 0;
@@ -397,7 +396,7 @@ void motorUserOrient(uint8_t theta){
     double angle = theta*3.14/180;
 
     // Convert the angle to a number of ticks for the encoder to use
-    theta = angle*28/3.14;
+    theta = round(angle/3.14)*28;
 
     // If the Angle is positive, robot rotates counter-clockwise
     if(theta == abs(theta))
@@ -486,7 +485,7 @@ void getAngle(){
 void checkAngle(){
     if((final_pose[0] - pose[0]) < 0) {
         motorLeftTurn180();
-        pose[0] = pose[0] * (-1);
+        final_pose[0] = final_pose[0] * (-1);
     }
 
     else {
@@ -517,7 +516,7 @@ void nav_xy(double x, double y){
     // Rotate robot to face goal position
     motorSelfOrient();
 
-    motorForward();
+    motorForward(300, 311);
     if(startCount == true){
         initDriveTimer();
     }

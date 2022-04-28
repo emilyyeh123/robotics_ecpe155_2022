@@ -11,5 +11,11 @@
 void initDriveTimer();
 void Timer0IntHandler(void);
 
+int e_old;
+int e_new;
+int integral_old;
+int derivative_old;
+int setL;
+int setR;
 
 #endif /* TIMER_H_ */

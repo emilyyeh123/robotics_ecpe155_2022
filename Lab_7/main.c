@@ -2,7 +2,13 @@
 
 /**
  * main.c
+<<<<<<< HEAD
+ * The purpose of this program is to test the PI control function
+ * The robot will be set to a specific speed.
+ * The timer will kick in and correct the robots orientation every 2 seconds
  */
+
+
 
 #include <stdint.h>
 #include <stdio.h>
