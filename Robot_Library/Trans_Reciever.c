@@ -81,8 +81,9 @@ void recieveMess(char *packet_rec, char *packet_send){
 
             // move forward
             case(0x01):{
-                motorForward();
-                travelTime(packet_rec[2]);
+                motorForward(packet_rec[1], packet_rec[2]);
+                SysCtlDelay(packet_rec[3] * 1000000);
+                motorStop();
 
                 break;
             }

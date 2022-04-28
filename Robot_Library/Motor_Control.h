@@ -14,7 +14,7 @@ extern double final_pose[8];
 extern double angle;
 
 void initMotor();
-void motorForward();
+void motorForward(uint16_t vLeft,uint16_t vRight);
 void motorBackward();
 void travelTime(uint16_t distance);
 void motorRightTurn90();
