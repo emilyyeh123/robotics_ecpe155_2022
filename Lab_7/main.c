@@ -2,10 +2,12 @@
 
 /**
  * main.c
+<<<<<<< HEAD
  * The purpose of this program is to test the PI control function
  * The robot will be set to a specific speed.
  * The timer will kick in and correct the robots orientation every 2 seconds
  */
+
 
 
 #include <stdint.h>
@@ -35,27 +37,30 @@
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
 #include "timer.h"
+#include "IR_Sensor.h"
 
 
+// can receive up to 8 bytes of data
+// 3 bytes reserved for start (0xAA), command, end (0x55)
+char packet_rec[8];
+char packet_send[8];
 
 int main(void)
 {
-    initMotor();
-    initDriveTimer();
-    initQEInterrupt();
+    initSerial();
     initLED();
-
-    revCountRight = 0;
-    revCountLeft = 0;
-
-    displayGreenLED();
-    SysCtlDelay(5000000);
-    clearLED();
-
-    motorForward(300,350);
+    initMotor();
+    initIRSensor();
 
     while(1){
+        initRecPacket(packet_rec);
+        initSendPacket(packet_send);
 
+        storeReceivedPacket(packet_rec);
+
+        clearLED();
+        SysCtlDelay(5000000);
+
+        performAction(packet_rec, packet_send);
     }
-
 }

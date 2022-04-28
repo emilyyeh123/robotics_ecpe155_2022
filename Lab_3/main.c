@@ -32,16 +32,17 @@ int main(){
     revCountRight = 0;
     revCountLeft = 0;
 
-    motorForward(200,200);
+    motorRightTurn90();
+    motorStop();
     SysCtlDelay(5000000);
 
     while(1){
-
+/*
         motorCorrection();
         SysCtlDelay(500);
 
         motorRect(50, 20);
-/*
+
         motorAvoidLeftBump();
         motorAvoidRightBump();
 */

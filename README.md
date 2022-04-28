@@ -1,10 +1,91 @@
 # bishop_ecpe155_2022
 This is the shared repository for team Bishop (named after a character from the movie Aliens) for the Spring 2022 ECPE 155 Robotics Class. The team includes Emily Yeh and Uri Grunder.
 
-## Lab 6
-In Lab 6 we designed a communication protocol to send and receive data between the Tiva and the Raspberry Pi.
+## Lab 7
+In Lab 7 we aimed to design a more complex object avoidence function that can help the robot navigate from a starting position to a user defined position in the global reference frame.
 
-A logic analyzer was used to observe communication between the two boards. A sceenshot was included in the Lab 6 folder: [Logic Analyzer Screenshot] (Lab_6/Put%stuff%here.pdf). This shows data recieved on the Tiva from the Raspberry Pi through channel 9 and a response recieved on the Raspberry Pi from the Tiva through channel 1. 
+A function for global navigation was established during Lab 6. This navigation function takes in user defined "x" and "y" coordinates (in centimeters) and compares it with the robot's current location. The robot is then oriented towards the final position and begins to move towards it. This function is called `nav_xy` and can be found in the Robot Library Folder as: [Motor_Control.c](Robot_Library/Motor_Control.c) and [Motor_Control.h](Robot_Library/Motor_Control.h). A summary of this function can be seen in the Lab 6 section of this document.
+
+The global navigation function currently can orient the robot, move towards a final destination, stop once its reached the destination, and transmit a "task completion" signal to the Pi but it must be modified to take constantly take in sensor data and alter functionality if an obstacle is sensed. To accomplish this, it is proposed that a new object avoidence function be developed. The pseudocode for this function is described in Lab_7 under: [Lab_7_Psudeocode.md](Lab_7/Lab_7_Pseudocode.md). This code is still under development and has not yet been tested. However, sensor data remains to be successfully transmitted between the Tiva and the Raspberry Pi.
+
+We have added a new command to test this obstacle avoidance function. The transmit signal has been set up on the pi as another menu function under movement. It asks for 2 inputs: an X and Y coordinate. It will pass these inputs as an individual byte of data and the Tiva will use these values in the a `nav_xy` function that implements obstacle avoidance. This case has been prepared on the Tiva just like the other movement functions and will implement the navigation function once we are able to solve the navigation and distance issues.
+
+## Lab 6
+In Lab 6 we designed a [communication protocol](Command_Data%20Planner.xlxs) to send and receive data between the Tiva and the Raspberry Pi. Using this protocol, we can  control the robot using commands passed from the Raspberry Pi to the Tiva. We set the maximum number of bytes (sent and received) to 8 and declared send/receive arrays of size 8 on the Tiva. A logic analyzer was used to observe communication between the two boards and confirm that data was being sent properly. The [Logic Analyzer Screenshot](Lab_6/Logic%20Analyzer%20Screenshot.png) shows data recieved on the Tiva from the Raspberry Pi through channel 9 and a response recieved on the Raspberry Pi from the Tiva through channel 1.
+
+### Tiva Robot Library Updates
+Two new files, [Trans_Reciever.c](Robot_Library/Trans_Reciever.c) and [Trans_Reciever.h](Robot_Library/Trans_Reciever.h), were created in the robot peripheral library to define the Tiva's role in serial communication. A high-level description of each function follows.
+
+- `initSerial()`
+  - Initialize pins for serial communication by enabling the UART4 and GPIO C Modules and assigning reviever and transmitter pins.
+
+- `storeReceivedPacket(char *packet_rec)`
+  - The Tiva board waits for incoming commands from the Raspberry Pi. The Tiva will hold all actions until a string array is transferred to the system. This character array is stored as a global variable `packet_rec`.
+
+- `initRecPacket(char *packet_rec)`
+  - resets/clears receive packet array by setting all 8 elements equal to 0x00
+
+- `initSendPacket(char *packet_send);`
+  - resets/clears send packet array by setting first element equal to the start command and following 7 elements equal to 0x00
+
+- `performAction()`
+  - Elements stored in the receive packet now get analyzed through a switch statement. Cases will only be tested if an initialization command is observed in the first element of the character array.
+  - The second element of the character array is compared against a list of robot function commands. If a match is successful, the Tiva will call on subsequent array elements to define relevant function parameters.
+  - The Tiva will direct the robot to perform the called upon action. Once the action or set of actions is completed, the Tiva will transmit a message of completion to the Raspberry Pi.
+  - (this following has been commented out and remains untested) If an error occurs or a sensor is triggered, the running function will stop and sensor data will be transmitted to the Raspberry Pi for further instruction. In the event that the robot is unable to complete its original task, a green LED will be turned on to indicate that the Tiva is awaiting instruction or a red LED will be turned on to indicate an error. The transmitting array is described by the 8-element character array `packet_send`.
+
+The more complex serial control function is currently being validated. 
+
+To minimize the number of parameters passed to the Tiva from the Raspberry Pi, the Motor_Control source code has been modified in the Robot Library folder under [Motor_Control.c](Robot_Library/Motor_Control.c) and [Motor_Control.h](Robot_Library/Motor_Control.h). A summary of the source code modifications are listed below.
+  - `motorForward()`
+    - The speed is statically defined such that the robot travels in a nearly straight, forward motion at a static speed of 13.3 cm per second. 
+
+  - `motorBackward()`
+    - The speed is statically defined such that the robot travels in a nearly straight, backward motion at a static speed of 13.3 cm per second. 
+
+  -  `motorCorrections()`
+    - This function was deleted as a static wheel speed has been adopted
+
+  - `travelTime(uint16_t distance)`
+    - This function was created to provide a time duration for robot motion to occur. A desired distance in centimeters is specified by the user and is converted into a time duration. A static velocity by a calculated time duration should yield a known distance traveled. 
+    - The ability to calculate the distance traveled over an approximate time is also foundational to functions that will update the robot position at regular intervals.
+
+  - `extern double angle`
+    - This global variable refers to the angle formed between a line drawn from the robots initial position to a final position and the positive x-axis, taken as the straight line drawn forward from the midpoint of the robot.
+
+  - `extern double pose[2]`
+    - Global Variable that defines the robots initial position. When the robot is activated, this value will default to {0,0,0}. This corresponds to the robots kinematic model where {0,0,0} = {x, y, angle}. 
+
+  - `extern double final_pose[2]`
+    - Global Variable that defines the robots final position. This variable is initialized as {0, 0, 0} but will be later defined by the user. The three elements in the array refer to the kinematic model where {0, 0, 0} = {x, y, angle}.
+
+
+  - `motorCheckAngle()`
+    - Function that takes the difference between the x-values, element[0] of the `pose` and `final_pose` arrays. A negative value indicates that the desired destination is behind the robot.
+    - In the event that the difference is negative the robot will be rotated 180 degrees. This is because angles calculated using arcTan retain a domain between postive and negative 90 degrees, so the final pose must be within that domain to adequately coordinate robot motion towards the final position. The sign of the stored value for the final pose is changed to indicate the effect of the rotation.
+
+  - `getAngle()`
+    - Function to calculate the angle of a straight line drawn from the robots initial position to the final position and the positive x-axis. The positive x-axis is taken as the line drawn from the robot's midpoint in the forward direction.
+    - The calculated angle is stored as a global variable `angle `
+
+  - `motorSelfOrient()`
+    - Function that rotates the robot from its intial orientation to face its destination position.
+      - Assigns the robots orientation the value of the global variable `angle`. 
+      - Converts the angle to a number of ticks that can be tracked by the quadrature encoder.
+      - Based on the sign of the angle, the robot will rotate clock-wise or counterclock-wise until the desired orentation is met.
+      - Angle is assumed to be in radians
+
+  - `motorUserOrient()`
+    - Function that rotates the robot from its initial orientation to face a user specified angle between positive and negative 90 degrees.
+      - User input is limited to the domain of arcTan to ensure the number transmitted from the Raspberry Pi stays within the bounds of 1 byte (0 to 255)
+
+  - `nav_xy(double x, double y)`
+    - Function to navigate the robot from its initial position to a global destination defined by the user.
+
+### Raspberry Pi 
+A User Interface has been developed on the Raspberry Pi to aid in user control of basic robot motor functions. This code is included in the raspberryPi folder in the main branch of the repository as [uartComm.py](raspberryPi/uartComm.py). A high-level description of the code can be found in [raspberryPi/README.md](raspberryPi/README.md).
+
+This user interface successfully transmits and recieves data as shown in [Logic Analyzer Screenshot](Lab_6/Logic%20Analyzer%20Screenshot.png). IR data is also sucessfully transmittable between the Tiva and the Raspberry Pi. However, the more complex motion control of the robot are still being validated.
 
 ## Lab 5
 In Lab 5 we attached three Infrared (IR) Sensors to the robot chasis and created a program that used those sensors to avoid objects that approach the robot sides and rear. 
@@ -29,7 +110,6 @@ The [Sensor Verification](Lab_5/sensorVerification.md) file describes how these 
 showing that the IR sensors work independent of all other robot features.
 
 Additionally, Emily did amazing work in configuring the GPIO pins to the ADC alternate function.
-
 
 ## Lab 4
 In Lab 4, we designed, printed and attached a bumper to the robot. Bump switches were used to signal the robot to take specified actions when a bumper was depressed.

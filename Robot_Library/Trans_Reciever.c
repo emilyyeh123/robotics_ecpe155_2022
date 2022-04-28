@@ -29,7 +29,7 @@
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
 #include "timer.h"
-
+#include "IR_Sensor.h"
 
 
 
@@ -57,96 +57,7 @@ void initSerial(){
 
 
 
-
-
-void recieveMess(char *packet_rec, char *packet_send){
-
-    // Indicate ready to receive
-    displayGreenLED();
-    // Wait until a response is received
-    while(!UARTCharsAvail(UART1_BASE)) {}
-
-    // Store the incoming data to a specified array
-    for(int i = 0; i < sizeof(packet_rec); i++) {
-            packet_rec[i] = UARTCharGet(UART1_BASE);
-    }
-
-    clearLED();
-
-    // If the initialize flag is receive
-    if ((packet_rec[0] == 0xAA) & (packet_rec[2] == 0x55)) {
-
-        //Commands type based on the second element
-        switch(packet_rec[1]) {
-
-            // move forward
-            case(0x01):{
-                motorForward(packet_rec[1], packet_rec[2]);
-                SysCtlDelay(packet_rec[3] * 1000000);
-                motorStop();
-
-                break;
-            }
-
-            // move backwards
-            case(0x02):{
-                motorBackward();
-                travelTime(packet_rec[2]);
-
-                break;
-            }
-
-            // turn right
-            case(0x03):{
-                motorUserOrient(-90);
-
-                break;
-            }
-
-            // turn left
-            case(0x04):{
-                motorUserOrient(90);
-
-                break;
-            }
-
-            // When navigation command is received
-            case (0x81):{
-                displayRedLED();
-
-                // Convert Response to variable x
-                double x = strtod(packet_rec[2]);
-
-                // Convert Response to variable x
-                double y = strtod(packet_rec[3]);
-
-                clearLED();
-                displayBlueLED();
-
-                nav_xy(x, y);
-
-                // If robot has reached goal
-                if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
-                    jobComplete();
-                }
-                // Else indicate an object or error of some kind
-                else if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
-                    objectDetected(packet_send);
-                }
-            }
-
-        }
-
-    displayBlueLED();
-    SysCtlDelay(5000000);
-    clearLED();
-}
-
-}
-
-
-
-
+/*
 void jobComplete(char *packet_send){
     motorStop();
     clearLED();
@@ -174,5 +85,184 @@ void objectDetected(char *packet_send){
     return;
 
 }
+*/
 
 
+void performAction(char *packet_rec, char *packet_send){
+    uint32_t leftSensor = 0;
+    uint32_t rightSensor = 0;
+    uint32_t backSensor = 0;
+
+    // check if first command is start command
+    if(packet_rec[0] == startCommand){
+        switch(packet_rec[1]){
+        case moveForward:
+            // REPLACE THE FOLLOWING CODE WITH
+            // TICK-BASED MOTOR FORWARD FUNCTION HERE
+            // desired distance will be returned by packet_rec[2]
+            packet_send[1] = 0x31;
+            packet_send[2] = endCommand;
+            for(int i = 0; i < 3; i++) {
+                 UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+
+            // move forward
+            case(0x01):{
+                motorForward(packet_rec[1], packet_rec[2]);
+                SysCtlDelay(packet_rec[3] * 1000000);
+                motorStop();
+
+            //motorForward();
+            //travelTime(packet_rec[2]);
+            break;
+
+
+        case moveBackward:
+            // REPLACE THE FOLLOWING CODE WITH
+            // TICK-BASED MOTOR FORWARD FUNCTION HERE
+            // desired distance will be returned by packet_rec[2]
+            packet_send[1] = 0x32;
+            packet_send[2] = endCommand;
+            for(int i = 0; i < 3; i++) {
+                 UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+
+            //motorBackward();
+            //travelTime(packet_rec[2]);
+            break;
+
+
+        case turnRight:
+            // REPLACE THE FOLLOWING CODE
+            packet_send[1] = 0x33;
+            packet_send[2] = endCommand;
+            for(int i = 0; i < 3; i++) {
+                 UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+
+            //motorUserOrient(-90);
+            break;
+
+
+        case turnLeft:
+            // REPLACE THE FOLLOWING CODE
+            packet_send[1] = 0x34;
+            packet_send[2] = endCommand;
+            for(int i = 0; i < 3; i++) {
+                 UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+
+            //motorUserOrient(90);
+            break;
+
+
+        case moveToXY:
+            // REPLACE THE FOLLOWING CODE WITH NAVIGATION FUNCTION HERE
+            // THIS IS TO DEMONSTRATE OBSTACLE AVOIDANCE
+            // X distance will be returned by packet_rec[2]
+            // Y distance will be returned by packet_rec[3]
+            packet_send[1] = 0x35;
+            packet_send[2] = endCommand;
+            for(int i = 0; i < 3; i++) {
+                 UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+
+            /*
+            // Convert Response to variable x
+            double x = strtod(packet_rec[2]);
+
+            // Convert Response to variable x
+            double y = strtod(packet_rec[3]);
+
+            clearLED();
+            displayBlueLED();
+
+            nav_xy(x, y);
+
+            // If robot has reached goal
+            if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
+                jobComplete();
+            }
+            // Else indicate an object or error of some kind
+            else if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
+                objectDetected(packet_send);
+            }
+            */
+            break;
+
+
+        case rightIR:
+            rightSensor = getSensorData1();
+            packet_send[1] = (rightSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+            packet_send[2] = rightSensor & 0xFF; // send lower 8 bits of 16-bit data
+            packet_send[3] = endCommand;
+            for(int i = 0; i < 4; i++){
+                UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+            rightSensor = 0;
+            break;
+
+
+        case leftIR:
+            leftSensor = getSensorData1();
+            packet_send[1] = (leftSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+            packet_send[2] = leftSensor & 0xFF; // send lower 8 bits of 16-bit data
+            packet_send[3] = endCommand;
+            for(int i = 0; i < 4; i++){
+                UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+            break;
+
+
+        case backIR:
+            backSensor = getSensorData1();
+            packet_send[1] = (backSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+            packet_send[2] = backSensor & 0xFF; // send lower 8 bits of 16-bit data
+            packet_send[3] = endCommand;
+            for(int i = 0; i < 4; i++){
+                UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+            break;
+
+
+        default:
+            // display red light if invalid command passed
+            // theoretically should never receive invalid command
+            displayRedLED();
+            SysCtlDelay(5000000);
+            clearLED();
+        }
+    }
+}
+
+
+void initRecPacket(char *packet_rec){
+    // reset packet_rec
+    for(int i = 0; i < 8; i++){
+        packet_rec[i] = 0x00;
+    }
+}
+
+void initSendPacket(char *packet_send){
+    // reset packet_send
+    packet_send[0] = startCommand;
+    for(int i = 1; i < 8; i++){
+        packet_send[i] = 0x00;
+    }
+}
+
+
+void storeReceivedPacket(char *packet_rec){
+    // Wait until a byte is received
+    while(!UARTCharsAvail(UART1_BASE)){}
+
+    // run until all bytes of data have been received
+    // or until end command has been received
+    int count = 0;
+    while(1){
+        // Store the incoming data
+        packet_rec[count] = UARTCharGet(UART1_BASE);
+        if(packet_rec[count] == endCommand){break;}
+        count++;
+    }
+}

@@ -31,38 +31,30 @@
 #include "bumpSensor.h"
 #include "Trans_Reciever.h"
 #include "timer.h"
+#include "IR_Sensor.h"
 
 
-
-// packet structure
-#define startCommand 0xAA
-#define endCommand 0x55
-
-// Movement Commands
-#define moveForward 0x01
-#define moveBackward 0x02
-#define turnRight 0x03
-#define turnLeft 0x04
-
-// IR Commands
-// INCLUDE IR COMMANDS HERE
-/*
-char packet_send[3] = {startCommand, 0x02, endCommand};
 // can receive up to 8 bytes of data
 // 3 bytes reserved for start (0xAA), command, end (0x55)
 char packet_rec[8];
-*/
+char packet_send[8];
+
 int main(void)
 {
     initSerial();
     initLED();
     initMotor();
+    initIRSensor();
 
     while(1){
+        initRecPacket(packet_rec);
+        initSendPacket(packet_send);
 
-        motorForward();
-        travelTime(2);
+        storeReceivedPacket(packet_rec);
 
-        SysCtlDelay(1000000000);
+        clearLED();
+        SysCtlDelay(5000000);
+
+        performAction(packet_rec, packet_send);
     }
 }
