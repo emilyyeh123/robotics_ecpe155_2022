@@ -24,6 +24,15 @@
 #define leftIR 0x12
 #define backIR 0x13
 
+// avoid objects toggle
+#define objectAvoidence 0x14
+#define autoForward 0x15
+#define objectEncounter 0x16
+#define taskComplete 0x17
+
+// Search next Way point
+#define searchWaypoint 0x18
+
 void initSerial();
 //void jobComplete(char *packet_send);
 //void objectDetected(char *packet_send);
@@ -31,6 +40,7 @@ void performAction(char *packet_rec, char *packet_Send);
 void initRecPacket(char *packet_rec);
 void initSendPacket(char *packet_send);
 void storeReceivedPacket(char *packet_rec);
+void motorColorSearch();
 
 
 #endif /* TRANS_RECIEVER_H_ */

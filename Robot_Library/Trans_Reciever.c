@@ -31,7 +31,8 @@
 #include "timer.h"
 #include "IR_Sensor.h"
 
-
+char packet_rec[8];
+char packet_send[8];
 
 void initSerial(){
 
@@ -107,7 +108,7 @@ void performAction(char *packet_rec, char *packet_send){
             }
 
             // move forward
-            case(0x01):{
+            //case(0x01):
                 motorForward(packet_rec[1], packet_rec[2]);
                 SysCtlDelay(packet_rec[3] * 1000000);
                 motorStop();
@@ -115,6 +116,43 @@ void performAction(char *packet_rec, char *packet_send){
             //motorForward();
             //travelTime(packet_rec[2]);
             break;
+
+        case autoForward:
+            // Reset quad encoder
+            revCountLeft = 0;
+            revCountRight = 0;
+
+            // begin forward motion
+            motorForward(310,300);
+
+            while(1){
+                // Monitor IR Data
+                int fLeft = getSensorData1();
+                int fRight = getSensorData2();
+
+                // When an object is encountered
+                if((fLeft <= 2000) | (fRight <= 2000)){
+                    motorStop();
+                    packet_send[1] = objectEncounter;
+                    break;
+                }
+
+                // If robot has traveled about 0.5 meters stop
+                if((revCountLeft >= 84) | (revCountRight >= 84)){
+                    motorStop();
+                    packet_send[1] = taskComplete;
+                    break;
+                }
+            }
+            int avg = round((revCountLeft + revCountRight)/2);
+            packet_send[0] = startCommand;
+            packet_send[2] = avg;
+            packet_send[3] = endCommand;
+
+            for(int i = 4; i < 8; i++){
+               packet_send[i] = 0x00;
+            }
+
 
 
         case moveBackward:
@@ -155,42 +193,6 @@ void performAction(char *packet_rec, char *packet_send){
             //motorUserOrient(90);
             break;
 
-
-        case moveToXY:
-            // REPLACE THE FOLLOWING CODE WITH NAVIGATION FUNCTION HERE
-            // THIS IS TO DEMONSTRATE OBSTACLE AVOIDANCE
-            // X distance will be returned by packet_rec[2]
-            // Y distance will be returned by packet_rec[3]
-            packet_send[1] = 0x35;
-            packet_send[2] = endCommand;
-            for(int i = 0; i < 3; i++) {
-                 UARTCharPut(UART1_BASE,packet_send[i]);
-            }
-
-            /*
-            // Convert Response to variable x
-            double x = strtod(packet_rec[2]);
-
-            // Convert Response to variable x
-            double y = strtod(packet_rec[3]);
-
-            clearLED();
-            displayBlueLED();
-
-            nav_xy(x, y);
-
-            // If robot has reached goal
-            if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
-                jobComplete();
-            }
-            // Else indicate an object or error of some kind
-            else if((pose[0] == final_pose[0]) && (pose[1] == final_pose[1])){
-                objectDetected(packet_send);
-            }
-            */
-            break;
-
-
         case rightIR:
             rightSensor = getSensorData1();
             packet_send[1] = (rightSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
@@ -223,6 +225,35 @@ void performAction(char *packet_rec, char *packet_send){
                 UARTCharPut(UART1_BASE,packet_send[i]);
             }
             break;
+
+        case searchWaypoint:
+            // Robot travels 45 degrees
+            turnMultiplier = 1;
+            motorRightTurn45();
+
+            // send data to Pi
+            packet_send[0] = startCommand;
+            packet_send[1] = taskComplete;
+            packet_send[2] = turnMultiplier;
+            packet_send[3] = endCommand;
+
+           // Fill in the remaining array
+            for(int i = 4; i < 8; i++){
+                 packet_send[i] = 0x00;
+             }
+
+            break;
+
+
+        case objectAvoidence:
+            objectAvoid();
+            packet_send[0] = startCommand;
+            packet_send[1] = taskComplete;
+            packet_send[2] = turnMultiplier;
+            packet_send[3] = endCommand;
+            for(int i = 4; i < 8; i++){
+                packet_send[i] = 0x00;
+            }
 
 
         default:
@@ -266,3 +297,5 @@ void storeReceivedPacket(char *packet_rec){
         count++;
     }
 }
+
+

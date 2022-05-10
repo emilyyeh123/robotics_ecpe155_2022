@@ -44,23 +44,53 @@
 // 3 bytes reserved for start (0xAA), command, end (0x55)
 char packet_rec[8];
 char packet_send[8];
+int turnMultiplier;
 
 int main(void)
 {
-    initSerial();
+    //initSerial();
+    initIRSensor();
     initLED();
     initMotor();
-    initIRSensor();
 
-    while(1){
-        initRecPacket(packet_rec);
-        initSendPacket(packet_send);
+    initQEInterrupt();
 
-        storeReceivedPacket(packet_rec);
+
+      // initRecPacket(packet_rec);
+        //initSendPacket(packet_send);
+
+
+
+/*        storeReceivedPacket(packet_rec);
 
         clearLED();
         SysCtlDelay(5000000);
 
         performAction(packet_rec, packet_send);
-    }
+
+        objectAvoid();
+*/
+while(1){
+int dist0 = getSensorData0();
+int dist1 = getSensorData1();
+int dist2 = getSensorData2();
+int dist3 = getSensorData3();
+SysCtlDelay(1000000);
+}
+
+
+
+/*
+        SysCtlDelay(2000000);
+
+        objectAvoid();
+        SysCtlDelay(1000000);
+        clearLED();
+        SysCtlDelay(5000000);
+*/
+
+
+
+
+
 }

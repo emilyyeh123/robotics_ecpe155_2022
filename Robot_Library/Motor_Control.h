@@ -12,6 +12,7 @@ extern bool startCount;
 extern double pose[8];
 extern double final_pose[8];
 extern double angle;
+extern int turnMultiplier;
 
 void initMotor();
 void motorForward(uint16_t vLeft,uint16_t vRight);
@@ -31,6 +32,7 @@ void motorUserOrient(uint8_t theta);
 void motorLeftTurn180();
 void getAngle();
 void checkAngle();
+void objectAvoid();
 
 
 #endif /* MOTOR_CONTROL_H_ */
