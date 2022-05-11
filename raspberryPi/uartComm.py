@@ -3,12 +3,15 @@
 import serial
 import time
 import struct
+import picamera
 
 # packet structure
 startCommand = 0xAA
 endCommand = 0x55
+ACTION_COMPLETE = 0x27
 
 # Movement Commands
+MOVE_TOWARD_WP = 0x08
 moveForward = 0x01
 moveBackward = 0x02
 turnRight = 0x03
@@ -31,6 +34,7 @@ def mainMenu():
 	print("0) exit")
 	print("1) move")
 	print("2) retreive IR Data")
+	print("3) take picture")
 
 	# receive user input
 	try:
@@ -47,7 +51,7 @@ def moveMenu():
 		print("\t2) move backward")
 		print("\t3) turn right 90 degrees")
 		print("\t4) turn left 90 degrees")
-		print("\t5) turn left 90 degrees")
+		print("\t5) automatically move forward (maze navigation)")
 
 		# receive user input
 		try:
@@ -59,7 +63,7 @@ def moveMenu():
 			return
 		elif directionInp < 1 or directionInp > 5:
 			# default
-			print("\tINTEGER MUST BE BETWEEN 1 AND 5. TRY AGAIN.\n")
+			print("\tINTEGER MUST BE BETWEEN 0 AND 5. TRY AGAIN.\n")
 		else:
 			sendMovePacket(directionInp)
 			break
@@ -104,15 +108,7 @@ def sendMovePacket(dir):
 	elif dir == 4:
 		packet.append(struct.pack('B', turnLeft))
 	elif dir == 5:
-		distX = promptDistance("\tHow far would you like to move in the X direction?")
-		if distX == 0:
-			return
-		distY = promptDistance("\tHow far would you like to move in the Y direction?")
-		if distY == 0:
-			return
-		packet.append(struct.pack('B', moveToXY))
-		packet.append(struct.pack('B', distX))
-		packet.append(struct.pack('B', distY))
+		packet.append(struct.pack('B', MOVE_TOWARD_WP))
 
 	packet.append(struct.pack('B', endCommand))
 	# send all requests
@@ -203,6 +199,20 @@ def sendIRCommand():
 	irData = (respPacket[0] << 8) | respPacket[1]
 	print(irData)
 
+def captureImg():
+	# setup camera - orient right-side up and shrink resolution
+	camera = picamera.PiCamera()
+	camera.rotation = 180
+	camera.resolution = (1280, 720)
+
+	# take 5 pictures in 3 sec intervals and store them in piImages
+	for i in range (10):
+		#camera.start_preview(fullscreen = False, window = (100, 200, 1280, 720))
+		time.sleep(3)
+		#camera.stop_preview()
+		camera.capture('/home/pi/bishop_ecpe155_2022/raspberryPi/INSERTFILE/img%s.jpg' % i)
+		print("Picture ", i)
+
 def main():
 	while 1:
 		menuInp = mainMenu()
@@ -215,6 +225,8 @@ def main():
 		elif menuInp == 2:
 			# call IR function
 			sendIRCommand()
+		elif menuInp == 3:
+			captureImg()
 		else:
 			# default
 			print("NOT A VALID OPTION")

@@ -15,12 +15,16 @@ def main():
 	camera.rotation = 180
 	camera.resolution = (1280, 720)
 
+	#camera.start_preview(fullscreen = False, window = (100, 200, 1280, 720))
+	#time.sleep(10)
+	#camera.stop_preview()
+
 	# take 5 pictures in 3 sec intervals and store them in piImages
 	for i in range (10):
 		camera.start_preview(fullscreen = False, window = (100, 200, 1280, 720))
-		time.sleep(3)
+		time.sleep(5)
 		camera.stop_preview()
-		camera.capture('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/moreImages/img%s.jpg' % i)
+		camera.capture('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/wallExamples/img%s.jpg' % i)
 
 if __name__ == "__main__":
 	main()

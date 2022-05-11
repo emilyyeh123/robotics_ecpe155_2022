@@ -10,31 +10,39 @@ from PIL import Image
 
 
 def main():
-	# setup camera - orient right-side up and shrink resolution
-	camera = picamera.PiCamera()
-	camera.rotation = 180
-	camera.resolution = (1280, 720)
-
-	# take 5 pictures in 3 sec intervals and store them in piImages
-	#for i in range (5):
-		#camera.start_preview(fullscreen = False, window = (100, 200, 1280, 720))
-		#time.sleep(3)
-		#camera.stop_preview()
-		#camera.capture('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/piImages/img%s.jpg' % i)
-
-	
-
-	#img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/piImages/img%s.jpg' % 4)
-	img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/moreImages/img%s.jpg' % 4)
+	'''
+	#img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/wallExamples/img%s.jpg' % 1)
+	#img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/moreImages/img%s.jpg' % 4)
 	hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 	# 720, 360 is middle of frame
-	coord = [750, 500]
+	coord = [720, 500]
 	hsvColor = hsv[coord[1],coord[0]]
-	print(hsvColor)
 	#imgPoint = cv2.circle(img, coord, radius = 0, color = (0,0,0), thickness = 10)
 	# 3, 159, 125 
 	lowerRed = np.array([0,60,60])
 	upperRed = np.array([100,180,180])
+	#print("HSV:\t\t ", hsvColor)
+	#print("Lower Bounds:\t ", lowerRed)
+	#print("Upper Bounds:\t ", upperRed)
+	
+	for i in range(3):
+		if not(hsvColor[i] >= lowerRed[i] and hsvColor[i] <= upperRed[i]):
+			print(False)
+			break
+		else:
+			if i == 2:
+				print(True)
+	
+	
+	for hsvPoint, lowerPoint, upperPoint in zip(hsvColor, lowerRed, upperRed):
+		if hsvPoint < lowerPoint or hsvPoint > upperPoint:
+			print(False)
+			break
+		else:
+			if hsvPoint == hsvColor[2]:
+				print(True)
+	
+
 	mask = cv2.inRange(hsv, lowerRed, upperRed)
 	imgPoint = cv2.circle(img, coord, radius = 0, color = (256,0,0), thickness = 20)
 	cv2.imshow("displayPoint", img)
@@ -46,7 +54,8 @@ def main():
 	# take 5 pictures and do color detection
 	for i in range(5):
 		#camera.capture('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/img.jpg')
-		img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/moreImages/img%s.jpg' % i)
+		#img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/piCam/moreImages/img%s.jpg' % (i+3))
+		img = cv2.imread('/home/pi/bishop_ecpe155_2022/raspberryPi/wallEx/img%s.jpg' % 1)
 
 		# hue, saturation, brightness
 		hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
@@ -58,7 +67,7 @@ def main():
 		cv2.imshow("mask", mask)
 		cv2.waitKey(0)
 
-	'''
+	
 
 	cv2.destroyAllWindows()
 
