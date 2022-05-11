@@ -90,10 +90,12 @@ void objectDetected(char *packet_send){
 
 
 void performAction(char *packet_rec, char *packet_send){
+/*  // Turn on if IR sensor functions are restored
     uint32_t rightFrontSensor = 0;
     uint32_t leftFrontSensor = 0;
     uint32_t rightSideSensor = 0;
     uint32_t leftSideSensor = 0;
+*/
 
     // check if first command is start command
     if(packet_rec[0] == startCommand){
@@ -101,6 +103,14 @@ void performAction(char *packet_rec, char *packet_send){
 
 
         case moveForward:
+            motorForward(packet_rec[1], packet_rec[2]);
+            initDriveTimer();
+            if((revCountLeft >= packet_rec[3]) | (revCountRight >= packet_rec[3])){
+                stopTimer();
+                motorStop();
+                break;
+            }
+
             // REPLACE THE FOLLOWING CODE WITH
             // TICK-BASED MOTOR FORWARD FUNCTION HERE
             // desired distance will be returned by packet_rec[2]
@@ -111,14 +121,17 @@ void performAction(char *packet_rec, char *packet_send){
             for(int i = 0; i < 2; i++) {
                  UARTCharPut(UART1_BASE,packet_send[i]);
             }
+            break;
 
 
         case autoForward:
             AutoForward();
+
             break;
 
 
         case moveBackward:
+
             // REPLACE THE FOLLOWING CODE WITH
             // TICK-BASED MOTOR FORWARD FUNCTION HERE
             // desired distance will be returned by packet_rec[2]
@@ -158,7 +171,7 @@ void performAction(char *packet_rec, char *packet_send){
 
             break;
 
-
+/*
         case rightFrontIR:
             rightFrontSensor = getSensorData2();
 
@@ -202,7 +215,7 @@ void performAction(char *packet_rec, char *packet_send){
                 UARTCharPut(UART1_BASE,packet_send[i]);
             }
             break;
-
+*/
 
         case searchWaypoint:
             // Robot travels 45 degrees
@@ -272,7 +285,7 @@ void initSendPacket(char *packet_send){
 void storeReceivedPacket(char *packet_rec){
     // Wait until a byte is received
     while(!UARTCharsAvail(UART1_BASE)){}
-
+/*
     // run until all bytes of data have been received
     // or until end command has been received
     int count = 0;
@@ -282,16 +295,24 @@ void storeReceivedPacket(char *packet_rec){
         if(packet_rec[count] == endCommand){break;}
         count++;
     }
+*/
+
+    for(int i = 0; i < 7; i++){
+        packet_rec[i] = UARTCharGet(UART1_BASE);
+    }
 }
+
 
 void AutoForward(){
     // Reset quad encoder
      revCountLeft = 0;
      revCountRight = 0;
 
+
+
      // begin forward motion
      motorForward(300,350);
-
+     initDriveTimer();
      while(1){
          SysCtlDelay(10000);
 
@@ -301,6 +322,7 @@ void AutoForward(){
 
          // When an object is encountered
          if((fLeft >= 1500) | (fRight >= 1500)){
+             stopTimer();
              motorStop();
              packet_send[1] = objectEncounter;
              break;
@@ -308,6 +330,7 @@ void AutoForward(){
 
          // If robot has traveled about 0.5 meters stop
          if((revCountLeft >= 80) | (revCountRight >= 80)){
+             stopTimer();
              motorStop();
              packet_send[1] = taskComplete;
              break;

@@ -54,13 +54,12 @@ int main(void)
     initMotor();
     initQEInterrupt();
 
-    objectAvoid();
+
+
     while(1){
-        //storeReceivedPacket(packet_rec);
+        storeReceivedPacket(packet_rec);
 
-       // performAction(packet_rec, packet_send);
-
-
+        performAction(packet_rec, packet_send);
 
     }
 

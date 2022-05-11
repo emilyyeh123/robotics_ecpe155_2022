@@ -20,11 +20,13 @@
 #define turnLeft 0x04
 #define moveToXY 0x05
 
+/*
 // IR Commands
 #define rightFrontIR 0x11
 #define leftFrontIR 0x12
 #define rightSideIR 0x13
 #define leftSideIR 0x19
+*/
 
 // avoid objects toggle
 #define objectAvoidence 0x14
