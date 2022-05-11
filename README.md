@@ -1,6 +1,9 @@
 # bishop_ecpe155_2022
 This is the shared repository for team Bishop (named after a character from the movie Aliens) for the Spring 2022 ECPE 155 Robotics Class. The team includes Emily Yeh and Uri Grunder.
 
+## Final Competition
+All final competition documentation is outlined in the [Final Competition Directory](finalCompetition/).
+
 ## Lab 7
 In Lab 7 we aimed to design a more complex object avoidence function that can help the robot navigate from a starting position to a user defined position in the global reference frame.
 
