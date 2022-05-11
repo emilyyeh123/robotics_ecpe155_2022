@@ -10,7 +10,13 @@
 
 void initDriveTimer();
 void Timer0IntHandler(void);
+void stopTimer();
 
+// declare global variables
+extern int integral_old;
+extern int derivative_old;
+
+// declare local variables
 int e_old;
 int e_new;
 int integral_old;

@@ -33,8 +33,6 @@
 
 int e_old;
 int e_new;
-int integral_old;
-int derivative_old;
 int setL;
 int setR;
 
@@ -46,7 +44,7 @@ void initDriveTimer(){
     integral_old = 0;
     derivative_old = 0;
     setL = 300;
-    setR = 311;
+    setR = 330;
 
     SysCtlClockSet(SYSCTL_SYSDIV_5|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);
 
@@ -75,21 +73,14 @@ void initDriveTimer(){
 
 
 void Timer0IntHandler(void){
-/*
-    displayBlueLED();
-    SysCtlDelay(5000000);
-    clearLED();
-    displayRedLED();
-    SysCtlDelay(5000000);
-    clearLED();
-*/
 
     // Clear the timer interrupt
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
     //declare sampling time and control variables
     int sampl_time = 3;
     int kp = 20;
-    int ki = 20;
+    int ki = 10;
+    int kd = 10;
 
     // Determine the distance traveled by the robot
     int distC = round((revCountRight + revCountLeft/64*18.85));
@@ -103,16 +94,18 @@ void Timer0IntHandler(void){
     int velR = round(revCountRight/sampl_time*18.85/32);
 
     // determine error between wheel velocities and control terms
-    int e_new = abs(velR - velL);
+    int e_new = velR - velL;
     int proportional_term = kp * e_new;
     int integral_term = ki*sampl_time/2*(e_new - e_old) + integral_old;
     integral_old = integral_term;
+    int derivative_term = kd*(e_new - e_old)/sampl_time + derivative_old;
+    derivative_old = derivative_term;
 
     // Replace the old error value
     e_old = e_new;
 
     // calculate the wheel speed modifier
-    int modifier = proportional_term + integral_term;
+    int modifier = proportional_term + integral_term + derivative_term;
 
 /*
     if(velR > 1){
@@ -128,7 +121,7 @@ void Timer0IntHandler(void){
     }
     clearLED();
 
-*/
+
 
 
     // Adjust the speeds of the slower wheel
@@ -138,12 +131,13 @@ void Timer0IntHandler(void){
         displayBlueLED();
         SysCtlDelay(5000000);
     }
+*/
 
     clearLED();
-
-    if(velR < velL){
+    // Update the speed of the right wheel
+    if(velR != velL){
         setR = modifier + setR;
-        motorForward(setL, setR);
+        motorForward(300, setR);
         displayGreenLED();
         SysCtlDelay(5000000);
     }
@@ -153,7 +147,7 @@ void Timer0IntHandler(void){
     // If a threshold limit is reached, reset the wheel speeds
     if((velL > 12) || (velR > 12)){
         setL = 300;
-        setR = 311;
+        setR = 330;
         motorForward(setL, setR);
         displayRedLED();
         SysCtlDelay(5000000);
@@ -163,5 +157,9 @@ void Timer0IntHandler(void){
 
 
 
+}
+
+void stopTimer(){
+    TimerDisable(TIMER0_BASE, TIMER_A);
 }
 

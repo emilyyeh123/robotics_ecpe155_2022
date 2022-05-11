@@ -4,6 +4,8 @@
  * main.c
  */
 
+
+
 #include <stdint.h>
 #include <stdio.h>
 #include <stdbool.h>
@@ -38,10 +40,17 @@
 // 3 bytes reserved for start (0xAA), command, end (0x55)
 char packet_rec[8];
 char packet_send[8];
+int turnMultiplier;
 
 int main(void)
 {
-    // call initialization functions
+    initSerial();
+    initIRSensor();
+    initLED();
+    initMotor();
+    initQEInterrupt();
 
-    while(1){}
+    while(1){
+        performAction();
+    }
 }
