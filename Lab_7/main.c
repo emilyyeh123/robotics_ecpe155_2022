@@ -48,49 +48,55 @@ int turnMultiplier;
 
 int main(void)
 {
-    //initSerial();
+    initSerial();
     initIRSensor();
     initLED();
     initMotor();
-
     initQEInterrupt();
 
+    objectAvoid();
+    while(1){
+        //storeReceivedPacket(packet_rec);
 
-      // initRecPacket(packet_rec);
-        //initSendPacket(packet_send);
-
-
-
-/*        storeReceivedPacket(packet_rec);
-
-        clearLED();
-        SysCtlDelay(5000000);
-
-        performAction(packet_rec, packet_send);
-
-        objectAvoid();
-*/
-while(1){
-int dist0 = getSensorData0();
-int dist1 = getSensorData1();
-int dist2 = getSensorData2();
-int dist3 = getSensorData3();
-SysCtlDelay(1000000);
-}
+       // performAction(packet_rec, packet_send);
 
 
+
+    }
 
 /*
-        SysCtlDelay(2000000);
+    objectAvoid();
 
-        objectAvoid();
-        SysCtlDelay(1000000);
-        clearLED();
-        SysCtlDelay(5000000);
+    int  dist0 = getSensorData0();
+    int  dist1 = getSensorData1();
+    int  dist2 = getSensorData2();
+    int  dist3 = getSensorData3();
+    SysCtlDelay(1000000);
+
+
+    // Testing Object Avoidance
+    displayBlueLED();
+    SysCtlDelay(2000000);
+
+    objectAvoid();
+    SysCtlDelay(1000000);
+    clearLED();
+    SysCtlDelay(5000000);
+    displayRedLED();
+
+
+    // Check Autonomous Forward Motion Function
+    displayBlueLED();
+    SysCtlDelay(2000000);
+    AutoForward();
+
+    clearLED();
+    displayRedLED();
+
+motorBackward(400,300);
+SysCtlDelay(6000000);
+motorStop();
 */
-
-
-
 
 
 }

@@ -31,8 +31,8 @@
 #include "timer.h"
 #include "IR_Sensor.h"
 
-char packet_rec[8];
-char packet_send[8];
+char packet_rec[7];
+char packet_send[7];
 
 void initSerial(){
 
@@ -90,125 +90,80 @@ void objectDetected(char *packet_send){
 
 
 void performAction(char *packet_rec, char *packet_send){
-    uint32_t leftSensor = 0;
-    uint32_t rightSensor = 0;
-    uint32_t backSensor = 0;
+    uint32_t rightFrontSensor = 0;
+    uint32_t leftFrontSensor = 0;
+    uint32_t rightSideSensor = 0;
+    uint32_t leftSideSensor = 0;
 
     // check if first command is start command
     if(packet_rec[0] == startCommand){
         switch(packet_rec[1]){
+
+
         case moveForward:
             // REPLACE THE FOLLOWING CODE WITH
             // TICK-BASED MOTOR FORWARD FUNCTION HERE
             // desired distance will be returned by packet_rec[2]
-            packet_send[1] = 0x31;
+            packet_send[0] = startCommand;
+            packet_send[1] = taskComplete;
             packet_send[2] = endCommand;
-            for(int i = 0; i < 3; i++) {
+
+            for(int i = 0; i < 2; i++) {
                  UARTCharPut(UART1_BASE,packet_send[i]);
             }
 
-            // move forward
-            //case(0x01):
-                motorForward(packet_rec[1], packet_rec[2]);
-                SysCtlDelay(packet_rec[3] * 1000000);
-                motorStop();
-
-            //motorForward();
-            //travelTime(packet_rec[2]);
-            break;
 
         case autoForward:
-            // Reset quad encoder
-            revCountLeft = 0;
-            revCountRight = 0;
-
-            // begin forward motion
-            motorForward(310,300);
-
-            while(1){
-                // Monitor IR Data
-                int fLeft = getSensorData1();
-                int fRight = getSensorData2();
-
-                // When an object is encountered
-                if((fLeft <= 2000) | (fRight <= 2000)){
-                    motorStop();
-                    packet_send[1] = objectEncounter;
-                    break;
-                }
-
-                // If robot has traveled about 0.5 meters stop
-                if((revCountLeft >= 84) | (revCountRight >= 84)){
-                    motorStop();
-                    packet_send[1] = taskComplete;
-                    break;
-                }
-            }
-            int avg = round((revCountLeft + revCountRight)/2);
-            packet_send[0] = startCommand;
-            packet_send[2] = avg;
-            packet_send[3] = endCommand;
-
-            for(int i = 4; i < 8; i++){
-               packet_send[i] = 0x00;
-            }
-
+            AutoForward();
+            break;
 
 
         case moveBackward:
             // REPLACE THE FOLLOWING CODE WITH
             // TICK-BASED MOTOR FORWARD FUNCTION HERE
             // desired distance will be returned by packet_rec[2]
-            packet_send[1] = 0x32;
+            packet_send[0] = startCommand;
+            packet_send[1] = taskComplete;
             packet_send[2] = endCommand;
-            for(int i = 0; i < 3; i++) {
+
+            for(int i = 0; i < 2; i++) {
                  UARTCharPut(UART1_BASE,packet_send[i]);
             }
 
-            //motorBackward();
-            //travelTime(packet_rec[2]);
             break;
 
-
+        // 90 degree turn
         case turnRight:
-            // REPLACE THE FOLLOWING CODE
-            packet_send[1] = 0x33;
+
+            packet_send[0] = startCommand;
+            packet_send[1] = taskComplete;
             packet_send[2] = endCommand;
-            for(int i = 0; i < 3; i++) {
+
+            for(int i = 0; i < 2; i++) {
                  UARTCharPut(UART1_BASE,packet_send[i]);
             }
 
-            //motorUserOrient(-90);
             break;
 
-
+        // 90 degree turn
         case turnLeft:
-            // REPLACE THE FOLLOWING CODE
-            packet_send[1] = 0x34;
+
+            packet_send[0] = startCommand;
+            packet_send[1] = taskComplete;
             packet_send[2] = endCommand;
-            for(int i = 0; i < 3; i++) {
+
+            for(int i = 0; i < 2; i++) {
                  UARTCharPut(UART1_BASE,packet_send[i]);
             }
 
-            //motorUserOrient(90);
-            break;
-
-        case rightIR:
-            rightSensor = getSensorData1();
-            packet_send[1] = (rightSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
-            packet_send[2] = rightSensor & 0xFF; // send lower 8 bits of 16-bit data
-            packet_send[3] = endCommand;
-            for(int i = 0; i < 4; i++){
-                UARTCharPut(UART1_BASE,packet_send[i]);
-            }
-            rightSensor = 0;
             break;
 
 
-        case leftIR:
-            leftSensor = getSensorData1();
-            packet_send[1] = (leftSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
-            packet_send[2] = leftSensor & 0xFF; // send lower 8 bits of 16-bit data
+        case rightFrontIR:
+            rightFrontSensor = getSensorData2();
+
+            packet_send[1] = (rightFrontSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+            packet_send[2] = rightFrontSensor & 0xFF; // send lower 8 bits of 16-bit data
             packet_send[3] = endCommand;
             for(int i = 0; i < 4; i++){
                 UARTCharPut(UART1_BASE,packet_send[i]);
@@ -216,15 +171,38 @@ void performAction(char *packet_rec, char *packet_send){
             break;
 
 
-        case backIR:
-            backSensor = getSensorData1();
-            packet_send[1] = (backSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
-            packet_send[2] = backSensor & 0xFF; // send lower 8 bits of 16-bit data
+        case leftFrontIR:
+            leftFrontSensor = getSensorData3();
+            packet_send[1] = (leftFrontSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+            packet_send[2] = leftFrontSensor & 0xFF; // send lower 8 bits of 16-bit data
             packet_send[3] = endCommand;
             for(int i = 0; i < 4; i++){
                 UARTCharPut(UART1_BASE,packet_send[i]);
             }
             break;
+
+
+        case rightSideIR:
+            rightSideSensor = getSensorData1();
+            packet_send[1] = (rightSideSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+            packet_send[2] = rightSideSensor & 0xFF; // send lower 8 bits of 16-bit data
+            packet_send[3] = endCommand;
+            for(int i = 0; i < 4; i++){
+                UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+            break;
+
+
+        case leftSideIR:
+            leftSideSensor = getSensorData0();
+            packet_send[1] = (leftSideSensor >> 8) & 0xFF; // send upper 8 bits of 16-bit data
+            packet_send[2] = leftSideSensor & 0xFF; // send lower 8 bits of 16-bit data
+            packet_send[3] = endCommand;
+            for(int i = 0; i < 4; i++){
+                UARTCharPut(UART1_BASE,packet_send[i]);
+            }
+            break;
+
 
         case searchWaypoint:
             // Robot travels 45 degrees
@@ -237,23 +215,31 @@ void performAction(char *packet_rec, char *packet_send){
             packet_send[2] = turnMultiplier;
             packet_send[3] = endCommand;
 
-           // Fill in the remaining array
-            for(int i = 4; i < 8; i++){
-                 packet_send[i] = 0x00;
-             }
+            // Send Data
+            for(int i = 0; i < 3; i++) {
+                 UARTCharPut(UART1_BASE,packet_send[i]);
+            }
 
             break;
 
 
         case objectAvoidence:
+
+            // Toggle Object Avoidance
             objectAvoid();
+
+            // Fill in transmission array
             packet_send[0] = startCommand;
             packet_send[1] = taskComplete;
             packet_send[2] = turnMultiplier;
             packet_send[3] = endCommand;
-            for(int i = 4; i < 8; i++){
-                packet_send[i] = 0x00;
+
+            // send data to pi
+            for(int i = 0; i < 3; i++){
+                UARTCharPut(UART1_BASE,packet_send[i]);
             }
+
+            break;
 
 
         default:
@@ -269,7 +255,7 @@ void performAction(char *packet_rec, char *packet_send){
 
 void initRecPacket(char *packet_rec){
     // reset packet_rec
-    for(int i = 0; i < 8; i++){
+    for(int i = 0; i < 7; i++){
         packet_rec[i] = 0x00;
     }
 }
@@ -277,7 +263,7 @@ void initRecPacket(char *packet_rec){
 void initSendPacket(char *packet_send){
     // reset packet_send
     packet_send[0] = startCommand;
-    for(int i = 1; i < 8; i++){
+    for(int i = 1; i < 7; i++){
         packet_send[i] = 0x00;
     }
 }
@@ -298,4 +284,43 @@ void storeReceivedPacket(char *packet_rec){
     }
 }
 
+void AutoForward(){
+    // Reset quad encoder
+     revCountLeft = 0;
+     revCountRight = 0;
 
+     // begin forward motion
+     motorForward(300,350);
+
+     while(1){
+         SysCtlDelay(10000);
+
+         // Monitor IR Data
+         int fLeft = getSensorData3();
+         int fRight = getSensorData2();
+
+         // When an object is encountered
+         if((fLeft >= 1500) | (fRight >= 1500)){
+             motorStop();
+             packet_send[1] = objectEncounter;
+             break;
+         }
+
+         // If robot has traveled about 0.5 meters stop
+         if((revCountLeft >= 80) | (revCountRight >= 80)){
+             motorStop();
+             packet_send[1] = taskComplete;
+             break;
+         }
+     }
+     // Average position
+     int avg = round((revCountLeft + revCountRight)/2);
+
+     // Send data to Pi
+     packet_send[0] = startCommand;
+     packet_send[1] = revCountLeft;
+     packet_send[2] = endCommand;
+     for(int i = 0; i <= 2; i++){
+         UARTCharPut(UART1_BASE,packet_send[i]);;
+     }
+}

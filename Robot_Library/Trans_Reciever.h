@@ -11,6 +11,7 @@
 // packet structure
 #define startCommand 0xAA
 #define endCommand 0x55
+#define taskComplete 0x17
 
 // Movement Commands
 #define moveForward 0x01
@@ -20,15 +21,16 @@
 #define moveToXY 0x05
 
 // IR Commands
-#define rightIR 0x11
-#define leftIR 0x12
-#define backIR 0x13
+#define rightFrontIR 0x11
+#define leftFrontIR 0x12
+#define rightSideIR 0x13
+#define leftSideIR 0x19
 
 // avoid objects toggle
 #define objectAvoidence 0x14
 #define autoForward 0x15
 #define objectEncounter 0x16
-#define taskComplete 0x17
+
 
 // Search next Way point
 #define searchWaypoint 0x18
@@ -41,6 +43,7 @@ void initRecPacket(char *packet_rec);
 void initSendPacket(char *packet_send);
 void storeReceivedPacket(char *packet_rec);
 void motorColorSearch();
+void AutoForward();
 
 
 #endif /* TRANS_RECIEVER_H_ */

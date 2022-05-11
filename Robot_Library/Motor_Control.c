@@ -136,7 +136,7 @@ void motorRightTurn90(){
         if((revCountRight >= 14) || (revCountLeft >= 14)){
             revCountRight = 0;
             revCountLeft = 0;
-
+            motorStop();
             return;
         }
     }
@@ -150,7 +150,7 @@ void motorLeftTurn90(){
     revCountLeft = 0;
     // The Period must be set to 800 for this function to work correctly
     // set pulse width
-    setPW(210, 200);
+    setPW(250, 230);
 
     // based on the HUB-ee control sheet,
     // Forward in1: High, Forward in2: Low
@@ -165,8 +165,7 @@ void motorLeftTurn90(){
         if((revCountRight >= 15) || (revCountLeft >= 15)){
             revCountRight = 0;
             revCountLeft = 0;
-
-
+            motorStop();
             return;
         }
     }
@@ -284,10 +283,12 @@ void motorRightTurn45(){
         if((revCountRight >= 6) || (revCountLeft >= 6)){
             revCountRight = 0;
             revCountLeft = 0;
-
+            motorStop();
             return;
         }
     }
+
+
 }
 
 
@@ -499,56 +500,54 @@ void checkAngle(){
 void objectAvoid(){
 
     turnMultiplier = 0;
+
     while(1){
         //Check IR sensor data
-        int frontRight = getSensorData0();
+        int sideLeft = getSensorData0();
         int sideRight = getSensorData1();
-        int sideLeft = getSensorData2();
+        int frontRight = getSensorData2();
         int frontLeft = getSensorData3();
 
 
-        if((frontLeft >= 1500) | (frontRight >= 1500)){
+        if((frontLeft >= 1300) | (frontRight >= 1300)){
             motorBackward();
             SysCtlDelay(2000000);
 
-            motorRightTurn45();
+            motorRightTurn90();
             motorStop();
             turnMultiplier = turnMultiplier - 1;
         }
-/*
-        if(frontRight >= 1000){
-            motorBackward();
-            SysCtlDelay(1000000);
 
-            motorLeftTurn45();
-            motorStop();
-            turnMultiplier = turnMultiplier + 1;
-        }
-*/
+        sideLeft = getSensorData0();
+        sideRight = getSensorData1();
+        frontRight = getSensorData2();
+        frontLeft = getSensorData3();
+
         // If the robot orientation in parallel to an avoided object
         if((sideRight >= 1500) | (sideLeft >= 1500)){
             // Move forward until the object perimeter is cleared
-            motorForward(310,300);
-            SysCtlDelay(2000000);
+            motorForward(300,340);
+            SysCtlDelay(5000000);
             motorStop();
+
+
         }
 
+        sideLeft = getSensorData0();
+        sideRight = getSensorData1();
+        frontRight = getSensorData2();
+        frontLeft = getSensorData3();
+
         // If no objects are detected in front of the robot, move forward a bit
-        if((frontRight < 1500) & (frontLeft < 1500)){
-            motorForward(310,300);
-            SysCtlDelay(2000000);
-            motorStop();
-            break;
-        }
-/*
-        // When the object is totally avoided, stop the robot and terminate the function
         if((frontRight < 1500) & (frontLeft < 1500) & (sideRight < 1500) & (sideLeft < 1500)){
-            motorForward(310,300);
-            SysCtlDelay(2000000);
+            motorForward(300,340);
+            SysCtlDelay(6000000);
             motorStop();
+            motorLeftTurn90();
+            turnMultiplier = turnMultiplier + 2;
             break;
         }
-*/
+
     }
 
 }
