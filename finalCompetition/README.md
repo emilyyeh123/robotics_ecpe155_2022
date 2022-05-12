@@ -53,5 +53,13 @@ However! During implimenation of this feature, the wheels would only speed up. E
 
 Unfortunately, I didn't have time to test the code nor begin altering the constants for the P.I. and D. This is something I would have liked to do with more time.
 
+### Last Comments
+One thing I would have really liked to try, was adding more sophisticated code to my robot behavioral functions. In lecture,we learned so many algorithms that handle the exact problems I encountered with my super simple functions. Problems with range data coming in from the IR sensors. Creating an effective feedback system with the quadrature encoder, plotting and planning the distance the robot has already traveled. These are all topics that have solutions in their more complex code. The simple functions were supposed to be a foundation to explore more complex code, not the main attraction. I wish I had more time to go beyond the most simple designs.
+
+This class was awesome! My partner was great and the course content was riveting. Maybe I should have switched majors. ;) 
+
+Have a good day!
+
+-Uri
 
 ## Robot Decision Controls
