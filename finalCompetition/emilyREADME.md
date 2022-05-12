@@ -1,31 +1,28 @@
 # Emily's Documentation
-Originally I was going to type it up all nicely and format it similarly to our other documentation,
-but I don't really think my brain has the functionality to make this nice right now.
-Also you said that we didn't need the nice formatting so I decided to make this a little more raw.
-Apologies for the word vomit that may be about to happen. 
+Originally I was going to type it up all nicely and format it similarly to our other documentation, but I don't really think my brain has the functionality to make this nice right now. Also you said that we didn't need the nice formatting so I decided to make this a little more raw. Apologies for the word vomit that may be about to happen. 
+
+For a lot of this project, we ended up getting a bunch of separate parts working, but once we started to put things together, things became complicated and we had to work out a bunch of kinks. The biggest issues I personally ran into were UART communication and image detection.
 
 ## UART Communication
-Uri did a really great job implementing object detection. Unfortunately, we weren't able to perform that as we spent the final day working out 
-unexpected serial communication issues and just barely got our pi to tell it to move the robot forward. The addition of the extra IR sensor
-caused a lot more trouble than expected (Uri may get more into this in his documentation). It somehow messed with our UART communication. I don't think
-it was working alone, though. Uri added obstacle avoidance and autonomous motor forward functions that used obstacle avoidance, but we didn't test it with the
-communication until the last day when we realized our communication wasn't working the same way.
+Uri did a really great job implementing object detection. Unfortunately, we weren't able to perform that as we spent the final day working out unexpected serial communication issues and just barely got our pi to tell it to move the robot forward. The addition of the extra IR sensor caused a lot more trouble than expected (Uri may get more into this in his documentation). It somehow messed with our UART communication. I don't think it was working alone, though. Uri added obstacle avoidance and autonomous motor forward functions that used obstacle avoidance, but we didn't test it with the communication until the last day when we realized our communication wasn't working the same way.
 
-I was trying to come up with a new communication protocol and I got partially through that (as can be seen in main.py). My idea sounded great in my head, 
-but I ended up stopping after realizing something was wrong with the communication system. A couple hours before the final competition, we finally decided to
-just revert our code back to when it was working with the UART and work from there. We just barely had enough time to get it to perform the move forward function
-before showing up the final.
+I was trying to come up with a new communication protocol and I got partially through that (as can be seen in main.py). My idea sounded great in my head, but I ended up stopping after realizing something was wrong with the communication system. A couple hours before the final competition, we finally decided to just revert our code back to when it was working with the UART and work from there. We just barely had enough time to get it to perform the move forward function before showing up the final.
 
-I can't quite remember exactly what my plan was, but it was basically to take some user input to set the flags for when the blue goal was detected
-or red waypoints were found. The autonomous move forward function would send back a signal when it completed its action (of moving a certain distance) or 
-return a signal saying that it didn't complete the action due to and obstacle. This would be used to attempt to calculate distance. Then, the pi would turn
-at increments of 45 degree angles to find a new waypoint and move forward towards it. The idea and flowchart for this can be seen in the
-(algorithms_flowCharts_diagrams)[finalCompetition/algorithms_flowCharts_diagrams/] directory.
+I can't quite remember exactly what my plan was, but it was basically to take some user input to set the flags for when the blue goal was detected or red waypoints were found. The autonomous move forward function would send back a signal when it completed its action (of moving a certain distance) or return a signal saying that it didn't complete the action due to and obstacle. This would be used to attempt to calculate distance. Then, the pi would turn at increments of 45 degree angles to find a new waypoint and move forward towards it. The idea and flowchart for this can be seen in the (algorithms_flowCharts_diagrams)[finalCompetition/algorithms_flowCharts_diagrams/] directory.
 
-In the future, I would definitely try to make the menu function easier to update with the addition and removal of commands. I also kept changing the communication
-protocol as I was trying to figure out how to execute it. I think the current communication protocol is very incorrect from having to revert back to our old 
-communication plans. There's also many incorrrect labels as I continued to think through the idea.
+In the future, I would definitely try to make the menu function easier to update with the addition and removal of commands. I also kept changing the communication protocol as I was trying to figure out how to execute it. I think the current communication protocol is very incorrect from having to revert back to our old  communication plans. There's also many incorrrect labels as I continued to think through the idea.
 
 ## openCV Image Detection
+I got a bunch of separate parts working on both color detection and shape detection, but it was not quite usable. I was able to produce masked and contoured images, but beyond that I was unable to return definitive data on whether or not a red circle was being seen. The algorithm I used had a lot of noise with shape detection and color masking was very uncertain as the hsv masking would turn specific colors into wildly different colors. After getting both of these up and running, I realized that I did not have a plan for the big picture continuing from there. That's when I transitioned back to communication where I ended up spending a while debugging some code before reverting back to an old version and implementing the new ideas into the working code.
 
+## Map Creation
+Originally, our idea was to get approximate [x,y] coordinates to send over to the pi as the robot moved, but I quickly realized it would not be as simple as this. I was going to use the data analytics knowledge I learned this semester to visualize and graph these points. Before I even got to consider this idea, we ended up switching our plan from global coordinates to just measuring distance traversed. So with that, we planned on measuring polar coordinates (theta and radius) using adjusted angle movements. This would then be converted to [x,y] coordinates that would be plotted on the map.
+
+## What I Learned
+After working with microcontrollers and raspberry pis so much this semester, I became very interested in all the possibilities of working with processors and embedded systems. I love the structure of these kinds of classes where we go through the process of learning different parts bit by bit, then coming up with our own ideas. That really made me excited to think of fun projects for myself this summer. In the past, I used to struggle coming up with ideas of things I could try to learn on my own, but now I think I really the limits of what I would be able to try to learn and play around with. 
+
+## Things I Would Have Done Differently
+I probably should have picked one thing to focus on and test. I worked on a lot of things all over the place and ended up getting no final product from that. I very much need to work on seeing the big picture and finding a way to achieve that. I would like to have seen our obstacle avoidance working with UART communication. We were so close with so many ideas, yet so far. We really should have narrowed our plan better.
+
+Now I'm being forced to turn off my computer because Uri and Noah want food, so this is where I'll end my thoughts. I was very excited about this project and wish I could continue working on it just a little bit more, but I'm very happy with what this class taught me.
 
