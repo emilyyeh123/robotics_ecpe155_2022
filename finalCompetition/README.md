@@ -41,6 +41,9 @@ There were several major challenges with the current iteration of code. I will c
 This behavior was very limited. Having the robot only turn right was a great shortcomming that  would have negatively impacted efficiency and may have prevented the robot from reaching the end all together. I ultimately chose to impliment this behavior because the robot has great difficulties in determining which direction to turn when both front IR sensors experienced and object. When an object was encountered, the robot ended up cycling left and right around the object without actually moving away from the object.
 If I were to do this section again, I would impliment some kind of filtering method to more precisely describe the IR sensor input and establish a priority of which sensor should react at any one time.
 
+`UART Communication`
+We had beef. For some reason the code that controlled serial communication from the Tiva to the Pi suddenly broke down. We did get the communication array compiled in the Tiva but it WOULD NOT SEND. I added a "break;" in the for loop and it actually worked even though there was no *while* loop in play. It was very strange and it took us critical hours to eventually revert back to the previous iteration of code, which I don't think was significantly different. I wish we had more time to troubleshoot that, or at least modify the old switch/case function menu.
+
 ### Special Feature
 The features I included in this project was a PID controller to adjust the speed of the wheels to ensure the robot was moving in a straight line. This file is included in the Robot Library fuction library under [timer.c](Robot_Library/timer.c), and [timer.h](Robot_Library/timer.h). This was written as an interrupt that would adjust the speed of each wheel every 3 seconds. A file showing the coded equations is included in the Final Competition folder under [PID_Idea](finalCompetition/PID_Idea.pdf). 
 
